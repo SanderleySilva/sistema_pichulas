@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil - {{ associado.nome }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'lista_associados' %}" class="text-decoration-none text-muted small">
+        <i class="bi bi-chevron-left"></i> Voltar para a lista
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mb-4" style="background: linear-gradient(135deg, var(--cor-laranja), #ffae42);">
+    <div class="card-body p-4 text-white">
+        <div class="d-flex align-items-center">
+            <div class="avatar-large me-3">
+                {{ associado.nome|first|upper }}
+            </div>
+            <div>
+                <h2 class="h4 mb-0 fw-bold">{{ associado.nome }} {{ associado.sobrenome }}</h2>
+                <span class="badge bg-white text-dark mt-1 opacity-75">Sócio {{ associado.tipo }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3 px-1">
+    <h3 class="h5 mb-0 fw-bold text-dark">Histórico de Mensalidades</h3>
+    <i class="bi bi-filter text-muted"></i>
+</div>
+
+<div class="row g-2">
+    {% for item in mensalidades %}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-status {% if item.pago %}bg-success-light text-success{% else %}bg-danger-light text-danger{% endif %} me-3">
+                            <i class="bi {% if item.pago %}bi-check-circle-fill{% else %}bi-exclamation-circle-fill{% endif %}"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold text-dark">{{ item.mes }}/{{ item.ano }}</p>
+                            <small class="text-muted">Referência</small>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <p class="mb-0 fw-bold {% if item.pago %}text-dark{% else %}text-danger{% endif %}">
+                            R$ {{ item.valor }}
+                        </p>
+                        <span class="badge {% if item.pago %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} border-0" style="font-size: 0.65rem;">
+                            {{ item.pago|yesno:"PAGO,PENDENTE" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted">Nenhuma mensalidade registrada.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    /* Avatar em destaque */
+    .avatar-large {
+        width: 65px;
+        height: 65px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.8rem;
+    }
+
+    /* Ícones de status na lista */
+    .icon-status {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .bg-success-light { background-color: #e8f5e9; }
+    .bg-danger-light { background-color: #ffebee; }
+
+    /* Estilo das Badges de Status (Subtle) */
+    .bg-success-subtle { background-color: #d1e7dd; }
+    .bg-danger-subtle { background-color: #f8d7da; }
+
+    /* Ajuste para não sobrepor o menu inferior se houver muitos itens */
+    .row.g-2 {
+        padding-bottom: 20px;
+    }
+</style>
+{% endblock %}

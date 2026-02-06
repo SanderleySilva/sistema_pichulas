@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar - Associação Pichulas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-0"> <div class="col-12 col-lg-6">
+        <div class="card shadow-none border-0 bg-transparent">
+            <div class="card-header text-center py-3 bg-transparent border-0">
+                <h2 class="h4 mb-0 fw-bold" style="color: var(--cor-laranja);">Cadastrar Associado</h2>
+                <p class="text-muted small">Preencha os dados do novo membro abaixo</p>
+            </div>
+
+            <div class="card-body p-3">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="bg-white p-4 rounded-4 shadow-sm border">
+                        {% for field in form %}
+                            <div class="mb-4"> <label class="form-label small fw-bold text-uppercase" style="color: #777; letter-spacing: 0.5px;">
+                                    {{ field.label }}
+                                </label>
+
+                                <div class="input-container">
+                                    {{ field }}
+                                </div>
+
+                                {% if field.help_text %}
+                                    <div class="form-text mt-1" style="font-size: 0.75rem;">{{ field.help_text }}</div>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="text-danger fw-bold" style="font-size: 0.8rem;">
+                                        <i class="bi bi-exclamation-circle"></i> {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid gap-3 mt-4 mb-5">
+                        <button type="submit" class="btn btn-lg fw-bold shadow-sm"
+                                style="background-color: var(--cor-laranja); color: white; border: none; padding: 15px;">
+                            <i class="bi bi-check-lg"></i> Salvar Cadastro
+                        </button>
+
+                        <a href="{% url 'lista_associados' %}" class="btn btn-link text-muted text-decoration-none py-2">
+                            Cancelar e voltar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilização focada em dispositivos móveis */
+    input, select, textarea {
+        display: block;
+        width: 100%;
+        padding: 14px 16px !important; /* Mais alto para facilitar o toque com o polegar */
+        font-size: 16px !important; /* Impede o zoom automático do iOS ao focar no campo */
+        color: #333;
+        background-color: #f9f9f9;
+        border: 2px solid #eee;
+        border-radius: 12px !important;
+        transition: all 0.2s ease-in-out;
+        appearance: none; /* Remove estilos padrão do navegador */
+    }
+
+    input:focus, select:focus {
+        background-color: #fff;
+        border-color: var(--cor-laranja);
+        outline: 0;
+        box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
+    }
+
+    /* Melhora visual para campos de seleção (setinha) */
+    select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px 12px;
+    }
+
+    /* Remove o contorno azul padrão em cliques no mobile */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+</style>
+{% endblock %}
