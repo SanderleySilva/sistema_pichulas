@@ -1,7 +1,7 @@
 from django.db import models
 from associados.models import Associados
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.utils import timezone
 
 
 

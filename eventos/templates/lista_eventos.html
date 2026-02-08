@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Eventos - Associação Pichulas{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="javascript:history.back()" class="text-decoration-none text-muted small px-1">
+        <i class="bi bi-chevron-left"></i> Voltar
+    </a>
+</div>
+
+<div class="d-flex justify-content-between align-items-end mb-4 px-1">
+    <div>
+        <h1 class="h3 mb-0 fw-bold text-dark" style="letter-spacing: -1px;">Próximos Eventos</h1>
+        <span class="badge bg-warning text-dark fw-bold" style="font-size: 0.7rem; background-color: var(--cor-amarelo)!important;">
+            {{ eventos|length }} AGENDADOS
+        </span>
+    </div>
+    <a href="{% url 'criar_evento' %}" class="btn btn-dark rounded-pill px-3 shadow-sm d-flex align-items-center"
+       style="background-color: var(--cor-laranja); border: none; height: 45px;">
+        <i class="bi bi-calendar-plus me-1"></i> <span class="small">NOVO</span>
+    </a>
+</div>
+
+<div class="row g-3">
+    {% for evento in eventos %}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-1">{{ evento.nome_evento }}</h5>
+                        <p class="mb-1 text-muted small">
+                            <i class="bi bi-geo-alt-fill text-danger"></i> {{ evento.local_evento }}
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-light text-dark border rounded-pill">
+                            R$ {{ evento.valor_da_cota }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mt-2 p-2 rounded-3" style="background-color: #f8f9fa;">
+                    <div class="me-3 text-center border-end pe-3">
+                        <span class="d-block fw-bold text-primary" style="font-size: 1.1rem;">{{ evento.data_evento|date:"d" }}</span>
+                        <span class="text-uppercase text-muted" style="font-size: 0.7rem;">{{ evento.data_evento|date:"M" }}</span>
+                    </div>
+                    <div class="ps-1">
+                        <small class="text-muted d-block">Data Completa</small>
+                        <span class="fw-bold small">{{ evento.data_evento|date }}</span>
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-3">
+                    <div class="col-12">
+                        <a href="#" class="btn btn-primary w-100 rounded-3 py-2 fw-bold shadow-none" style="background-color: #0d6efd; border: none;">
+                            <i class="bi bi-people me-2"></i> Ver Associados no Evento
+                        </a>
+                    </div>
+
+                    <div class="col-6">
+                        <a href="#" class="btn btn-outline-success w-100 rounded-3 py-2 small fw-bold">
+                            <i class="bi bi-check2-circle"></i> Finalizar
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="#" class="btn btn-outline-danger w-100 rounded-3 py-2 small fw-bold">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <i class="bi bi-calendar-x text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+        <p class="text-muted mt-2">Nenhum evento no horizonte.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    body {
+        background-color: #fdfaf5;
+    }
+
+    .card {
+        transition: transform 0.2s ease;
+    }
+
+    .card-body {
+        position: relative;
+    }
+
+    /* Botões menores para caberem lado a lado no celular */
+    .btn-outline-success, .btn-outline-danger {
+        font-size: 0.85rem;
+        border-width: 1.5px;
+    }
+
+    /* Feedback tátil */
+    .btn:active {
+        transform: scale(0.96);
+    }
+
+    /* Estilo do botão voltar */
+    .text-muted.small:hover {
+        color: var(--cor-laranja) !important;
+    }
+</style>
+{% endblock %}

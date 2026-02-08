@@ -25,5 +25,11 @@ class Associados(models.Model):
     def __str__(self):
         return f'{self.nome} - {self.sobrenome} - {self.tipo}'
 
+    @property
+    def esta_em_dia(self):
+        hoje = timezone.now().date()
 
-
+        return not self.mensalidades.filter(
+            status='ABERTA',
+            data_vencimento__lt=hoje
+        ).exists()

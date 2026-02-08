@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'associados',
     'financeiro',
     'relatorios',
+    'eventos',
 ]
 
 MIDDLEWARE = [

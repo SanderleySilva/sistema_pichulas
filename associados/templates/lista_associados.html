@@ -10,10 +10,18 @@
             {{ associados|length }} TOTAL
         </span>
     </div>
-    <a href="{% url 'cadastrar_associado' %}" class="btn btn-dark rounded-pill px-3 shadow-sm d-flex align-items-center"
-       style="background-color: var(--cor-laranja); border: none; height: 45px;">
-        <i class="bi bi-plus-lg me-1"></i> <span class="small">ADICIONAR</span>
-    </a>
+
+    <div class="d-flex gap-2">
+        <a href="{% url 'lista_inativos' %}" class="btn btn-secondary rounded-pill px-3 shadow-sm d-flex align-items-center"
+           style="background-color: #6c757d; border: none; height: 45px;">
+            <i class="bi bi-people-fill opacity-75 me-1"></i> <span class="small">INATIVOS</span>
+        </a>
+
+        <a href="{% url 'cadastrar_associado' %}" class="btn btn-dark rounded-pill px-3 shadow-sm d-flex align-items-center"
+           style="background-color: var(--cor-laranja); border: none; height: 45px;">
+            <i class="bi bi-plus-lg me-1"></i> <span class="small">NOVO</span>
+        </a>
+    </div>
 </div>
 
 <div class="row g-2">

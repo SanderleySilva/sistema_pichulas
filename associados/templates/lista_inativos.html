@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Inativos - Associação Pichulas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-4 px-1">
+    <div>
+        <h1 class="h3 mb-0 fw-bold text-secondary" style="letter-spacing: -1px;">Inativos</h1>
+        <span class="badge bg-secondary text-white fw-bold" style="font-size: 0.7rem;">
+            {{ associados|length }} FORA DE COMBATE
+        </span>
+    </div>
+    <a href="{% url 'lista_associados' %}" class="btn btn-outline-secondary rounded-pill px-3 btn-sm shadow-sm">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+<div class="row g-2">
+    {% for associado in associados %}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden grayscale-card">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center">
+
+                    <div class="flex-shrink-0 me-3">
+                        <div class="avatar-circle-inactive">
+                            {{ associado.nome|first|upper }}
+                        </div>
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold text-muted text-truncate" style="max-width: 140px;">
+                                {{ associado.nome }} {{ associado.sobrenome }}
+                            </h6>
+                            <small class="text-danger fw-bold" style="font-size: 0.65rem;">
+                                <i class="bi bi-x-circle-fill me-1" style="font-size: 0.5rem;"></i> INATIVO
+                            </small>
+                        </div>
+                        <div class="d-flex align-items-center mt-1">
+                            <span class="text-muted small">
+                                <i class="bi bi-shield-slash me-1"></i>{{ associado.tipo }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="ms-2 d-flex gap-2">
+                        <a href="{% url 'detalhe_associado' associado.id %}" class="btn-action view" title="Ver detalhes">
+                            <i class="bi bi-eye"></i>
+                        </a>
+
+                        <a href="{% url 'ativar_associado_inativo' associado.id %}" class="btn-action activate" title="Reativar Sócio">
+                            <i class="bi bi-person-check-fill"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <div class="py-4">
+            <i class="bi bi-emoji-smile text-muted" style="font-size: 3rem; opacity: 0.2;"></i>
+            <p class="text-muted mt-2">Nenhum sócio inativo! Todos estão jogando.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    /* Fundo da página */
+    body {
+        background-color: #f8f9fa;
+    }
+
+    /* Avatar Inativo */
+    .avatar-circle-inactive {
+        width: 48px;
+        height: 48px;
+        background: #ced4da;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* Card com aspecto desabilitado */
+    .grayscale-card {
+        background-color: #fdfdfd;
+        border: 1px solid rgba(0,0,0,0.02)!important;
+    }
+
+    /* Base para botões de ação */
+    .btn-action {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: 1px solid #eee;
+    }
+
+    /* Botão Ver Detalhes */
+    .btn-action.view {
+        color: #0d6efd;
+        background-color: #f0f7ff;
+        border-color: #e0eeff;
+    }
+
+    /* Botão de Ativação */
+    .btn-action.activate {
+        color: #198754;
+        background-color: #e9f7ef;
+        border-color: #d1e7dd;
+        font-size: 1.1rem;
+    }
+
+    .btn-action:active {
+        transform: scale(0.9);
+    }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}

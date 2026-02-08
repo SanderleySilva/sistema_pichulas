@@ -11,3 +11,5 @@ class AssociadosForm(ModelForm):
             'tipo',
             'valor_mensalidade',
         ]
+
+
