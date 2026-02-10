@@ -3,143 +3,144 @@
 {% block title %}Perfil - {{ associado.nome }}{% endblock %}
 
 {% block content %}
-<div class="mb-3">
-    <a href="{% url 'lista_associados' %}" class="text-decoration-none text-muted small">
-        <i class="bi bi-chevron-left"></i> Voltar para a lista
+<div class="mb-3 px-1">
+    <a href="{% url 'lista_associados' %}" class="text-decoration-none text-muted small d-flex align-items-center">
+        <i class="bi bi-chevron-left me-1"></i> Voltar para Membros
     </a>
 </div>
 
-<!-- CARD PERFIL -->
-<div class="card border-0 shadow-sm rounded-4 mb-4"
-     style="background: linear-gradient(135deg, var(--cor-laranja), #ffae42);">
-    <div class="card-body p-4 text-white">
-        <div class="d-flex align-items-center">
-            <div class="avatar-large me-3">
+<div class="card border-0 shadow-lg rounded-5 mb-4 overflow-hidden"
+     style="background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);">
+    <div class="card-body p-4 text-white position-relative">
+        <i class="bi bi-person-badge position-absolute top-50 end-0 translate-middle-y opacity-10" style="font-size: 8rem; margin-right: -20px;"></i>
+
+        <div class="d-flex align-items-center position-relative">
+            <div class="avatar-premium me-3">
                 {{ associado.nome|first|upper }}
             </div>
-            <div>
-                <h2 class="h4 mb-0 fw-bold">
+            <div class="overflow-hidden">
+                <h2 class="h4 mb-0 fw-bold text-truncate">
                     {{ associado.nome }} {{ associado.sobrenome }}
                 </h2>
-                <span class="badge bg-white text-dark mt-1 opacity-75">
-                    Sócio {{ associado.tipo }}
-                </span>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <span class="badge rounded-pill bg-white text-dark py-1 px-2" style="font-size: 0.65rem;">
+                        <i class="bi bi-award me-1"></i>SÓCIO {{ associado.tipo|upper }}
+                    </span>
 
-                {% if associado.esta_em_dia %}
-                    <span class="badge bg-success mt-2">Em dia</span>
-                {% else %}
-                    <span class="badge bg-danger mt-2">Inadimplente</span>
-                {% endif %}
+                    {% if associado.esta_em_dia %}
+                        <span class="badge rounded-pill bg-success py-1 px-2" style="font-size: 0.65rem;">
+                            <i class="bi bi-check-circle-fill me-1"></i>EM DIA
+                        </span>
+                    {% else %}
+                        <span class="badge rounded-pill bg-danger py-1 px-2 animate-pulse" style="font-size: 0.65rem;">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>PENDENTE
+                        </span>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- CARD FINANCEIRO -->
 <div class="card border-0 shadow-sm rounded-4 mb-4">
-    <div class="card-body p-3 d-flex justify-content-between align-items-center">
-        <div>
-            <p class="mb-1 text-muted small">Saldo disponível</p>
-            <h4 class="fw-bold mb-0 {% if associado.saldo_credito > 0 %}text-success{% else %}text-muted{% endif %}">
-                R$ {{ associado.saldo_credito }}
-            </h4>
-        </div>
-
-        <div>
-            <a href="{% url 'registrar_pagamento' associado.id %}"
-               class="btn btn-success rounded-3">
-                <i class="bi bi-cash-coin"></i> Registrar Pagamento
-            </a>
+    <div class="card-body p-3">
+        <div class="row align-items-center">
+            <div class="col-7 border-end">
+                <p class="mb-0 text-muted small text-uppercase fw-bold" style="font-size: 0.6rem;">Saldo de Crédito</p>
+                <h3 class="fw-bold mb-0 {% if associado.saldo_credito > 0 %}text-success{% else %}text-secondary{% endif %}">
+                    R$ {{ associado.saldo_credito|floatformat:2 }}
+                </h3>
+            </div>
+            <div class="col-5 text-center">
+                <a href="{% url 'registrar_pagamento' associado.id %}" class="btn-pay">
+                    <i class="bi bi-plus-circle-fill mb-1"></i>
+                    <span>PAGAR</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- HISTÓRICO -->
-<div class="d-flex justify-content-between align-items-center mb-3 px-1">
-    <h3 class="h5 mb-0 fw-bold text-dark">Histórico de Mensalidades</h3>
+<div class="px-1 d-flex justify-content-between align-items-center mb-3">
+    <h6 class="text-muted fw-bold small text-uppercase mb-0" style="letter-spacing: 1px;">Histórico Financeiro</h6>
+    <span class="badge bg-light text-muted border">{{ mensalidades|length }} registros</span>
 </div>
 
-<div class="row g-2">
+<div class="row g-2 px-1">
     {% for item in mensalidades %}
     <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4">
+        <div class="card border-0 shadow-sm rounded-4 item-mensalidade">
             <div class="card-body p-3">
                 <div class="d-flex justify-content-between align-items-center">
-
                     <div class="d-flex align-items-center">
-                        <div class="icon-status
-                            {% if item.status == 'PAGA' %}
-                                bg-success-light text-success
-                            {% else %}
-                                bg-danger-light text-danger
-                            {% endif %} me-3">
-                            <i class="bi
-                                {% if item.status == 'PAGA' %}
-                                    bi-check-circle-fill
-                                {% else %}
-                                    bi-exclamation-circle-fill
-                                {% endif %}">
-                            </i>
+                        <div class="status-box {% if item.status == 'PAGA' %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} me-3">
+                            <i class="bi {% if item.status == 'PAGA' %}bi-check-lg{% else %}bi-clock-history{% endif %}"></i>
                         </div>
-
                         <div>
-                            <p class="mb-0 fw-bold text-dark">
-                                {{ item.mes }}/{{ item.ano }}
-                            </p>
-                            <small class="text-muted">Referência</small>
+                            <p class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">{{ item.mes }}/{{ item.ano }}</p>
+                            <p class="mb-0 text-muted" style="font-size: 0.7rem;">Mensalidade</p>
                         </div>
                     </div>
 
                     <div class="text-end">
-                        <p class="mb-0 fw-bold
-                            {% if item.status == 'PAGA' %}
-                                text-dark
-                            {% else %}
-                                text-danger
-                            {% endif %}">
-                            R$ {{ item.valor }}
+                        <p class="mb-0 fw-bold {% if item.status == 'PAGA' %}text-dark{% else %}text-danger{% endif %}" style="font-size: 0.95rem;">
+                            R$ {{ item.valor|floatformat:2 }}
                         </p>
-
-                        <span class="badge
-                            {% if item.status == 'PAGA' %}
-                                bg-success-subtle text-success
-                            {% else %}
-                                bg-danger-subtle text-danger
-                            {% endif %} border-0"
-                            style="font-size: 0.65rem;">
+                        <span class="status-label {% if item.status == 'PAGA' %}status-pago{% else %}status-aberto{% endif %}">
                             {{ item.status }}
                         </span>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
     {% empty %}
     <div class="col-12 text-center py-5">
-        <p class="text-muted">Nenhuma mensalidade registrada.</p>
+        <div class="opacity-25 mb-2">
+            <i class="bi bi-folder-x fs-1"></i>
+        </div>
+        <p class="text-muted small">Nenhum registro de pagamento.</p>
     </div>
     {% endfor %}
 </div>
 
 <style>
-    .avatar-large {
-        width: 65px;
-        height: 65px;
-        background-color: rgba(255, 255, 255, 0.2);
-        border: 2px solid white;
+    body { background-color: #fdfaf5; }
+
+    /* Avatar Premium */
+    .avatar-premium {
+        width: 68px;
+        height: 68px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
         color: white;
-        border-radius: 50%;
+        border-radius: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 800;
         font-size: 1.8rem;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
     }
 
-    .icon-status {
-        width: 40px;
-        height: 40px;
+    /* Botão Registrar Pagamento */
+    .btn-pay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #27ae60;
+        transition: transform 0.2s;
+    }
+    .btn-pay i { font-size: 1.6rem; }
+    .btn-pay span { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px; }
+    .btn-pay:active { transform: scale(0.9); }
+
+    /* Status Boxes */
+    .status-box {
+        width: 44px;
+        height: 44px;
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -147,15 +148,36 @@
         font-size: 1.2rem;
     }
 
-    .bg-success-light { background-color: #e8f5e9; }
-    .bg-danger-light { background-color: #ffebee; }
-
-    .bg-success-subtle { background-color: #d1e7dd; }
-    .bg-danger-subtle { background-color: #f8d7da; }
-
-    .row.g-2 {
-        padding-bottom: 20px;
+    .status-label {
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
     }
-</style>
+    .status-pago { background-color: #e8f5e9; color: #2e7d32; }
+    .status-aberto { background-color: #ffebee; color: #c62828; }
 
+    /* Animação para Inadimplente */
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
+
+    .item-mensalidade {
+        border: 1px solid rgba(0,0,0,0.02)!important;
+        transition: background-color 0.2s;
+    }
+    .item-mensalidade:active { background-color: #f8f9fa; }
+
+    /* Cores de Fundo Suaves */
+    .bg-success-subtle { background-color: #ebfaf0; }
+    .bg-danger-subtle { background-color: #fff0f0; }
+
+    .rounded-5 { border-radius: 2rem !important; }
+</style>
 {% endblock %}

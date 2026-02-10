@@ -3,124 +3,139 @@
 {% block title %}Painel de Controle - Associação Pichulas{% endblock %}
 
 {% block content %}
-<div class="mb-4 px-1 d-flex justify-content-between align-items-center">
+<div class="mb-4 px-2 d-flex justify-content-between align-items-center">
     <div>
-        <h1 class="h3 mb-0 fw-bold text-dark" style="letter-spacing: -1px;">Olá, Pitchula!</h1>
-        <p class="text-muted small mb-0">Gestão de gerenciamento de assciados</p>
+        <h1 class="h4 mb-0 fw-bold text-dark" style="letter-spacing: -1px;">Olá, Pitchula!</h1>
+        <p class="text-muted" style="font-size: 0.75rem; margin-top: -2px;">Gestão de Associados</p>
     </div>
-    <div class="bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-        <i class="bi bi-person-circle fs-4 text-secondary"></i>
+    <div class="bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center border" style="width: 42px; height: 42px;">
+        <i class="bi bi-person-fill fs-5 text-secondary"></i>
     </div>
 </div>
 
-
-<h6 class="text-muted fw-bold small text-uppercase mb-3 px-1">Gerenciamento</h6>
-<div class="row g-3 mb-4">
+<h6 class="text-muted fw-bold small text-uppercase mb-3 px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Menu Principal</h6>
+<div class="row g-3 px-1">
     <div class="col-6">
         <a href="{% url 'cadastrar_associado' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center p-3 action-card">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-3 action-card h-100">
                 <div class="icon-box bg-primary-subtle text-primary mx-auto mb-2">
                     <i class="bi bi-person-plus-fill"></i>
                 </div>
-                <span class="fw-bold text-dark small">Novo Sócio</span>
+                <span class="fw-bold text-dark small d-block">Novo Sócio</span>
             </div>
         </a>
     </div>
 
     <div class="col-6">
         <a href="{% url 'lista_associados' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center p-3 action-card">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-3 action-card h-100">
                 <div class="icon-box bg-warning-subtle text-warning mx-auto mb-2">
                     <i class="bi bi-people-fill"></i>
                 </div>
-                <span class="fw-bold text-dark small">Lista Sócios</span>
+                <span class="fw-bold text-dark small d-block">Lista Sócios</span>
             </div>
         </a>
     </div>
 
     <div class="col-6">
         <a href="{% url 'criar_evento' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center p-3 action-card">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-3 action-card h-100">
                 <div class="icon-box bg-success-subtle text-success mx-auto mb-2">
                     <i class="bi bi-calendar-plus-fill"></i>
                 </div>
-                <span class="fw-bold text-dark small">Criar Evento</span>
+                <span class="fw-bold text-dark small d-block">Criar Evento</span>
             </div>
         </a>
     </div>
 
     <div class="col-6">
         <a href="{% url 'lista_eventos' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center p-3 action-card">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-3 action-card h-100">
                 <div class="icon-box bg-info-subtle text-info mx-auto mb-2">
                     <i class="bi bi-calendar-check-fill"></i>
                 </div>
-                <span class="fw-bold text-dark small">Ver Eventos</span>
+                <span class="fw-bold text-dark small d-block">Ver Eventos</span>
             </div>
         </a>
     </div>
 </div>
 
-<h6 class="text-muted fw-bold small text-uppercase mb-3 px-1">Análises</h6>
-<div class="row g-3">
-    <div class="col-12">
-        <a href="{% url 'tipo_relatorio' %}" class="text-decoration-none">
-            <div class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center bg-white action-card">
-                <div class="icon-box bg-dark text-white me-3" style="width: 45px; height: 45px;">
-                    <i class="bi bi-file-earmark-bar-graph-fill" style="font-size: 1.2rem;"></i>
-                </div>
-                <div>
-                    <h6 class="mb-0 fw-bold text-dark">Central de Relatórios</h6>
-                    <small class="text-muted">Gere PDFs Mensais e Anuais</small>
-                </div>
-                <i class="bi bi-chevron-right ms-auto text-muted"></i>
+<h6 class="text-muted fw-bold small text-uppercase mt-4 mb-3 px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Financeiro</h6>
+<div class="px-1 mb-4">
+    <a href="{% url 'tipo_relatorio' %}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center bg-white action-card">
+            <div class="icon-box-small bg-dark text-white me-3">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i>
             </div>
-        </a>
-    </div>
-</div>
-
-<div class="mt-5 px-1">
-    <div class="p-4 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, #2c3e50, #000000);">
-        <div class="d-flex align-items-center mb-2">
-            <i class="bi bi-lightbulb-fill text-warning me-2"></i>
-            <h5 class="fw-bold mb-0" style="font-size: 1rem;">Dica do Sistema</h5>
+            <div class="flex-grow-1">
+                <h6 class="mb-0 fw-bold text-dark small">Central de Relatórios</h6>
+                <p class="text-muted mb-0" style="font-size: 0.7rem;">Mensais e Anuais (PDF)</p>
+            </div>
+            <i class="bi bi-chevron-right text-muted small"></i>
         </div>
-        <p class="small mb-0 opacity-75">Mantenha os pagamentos atualizados para que os relatórios reflitam o caixa real da associação.</p>
+    </a>
+</div>
+
+<div class="px-1 mt-auto pb-3">
+    <div class="p-3 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, #1a2a3a, #000000);">
+        <div class="d-flex align-items-center mb-1">
+            <i class="bi bi-stars text-warning me-2"></i>
+            <span class="fw-bold" style="font-size: 0.85rem;">Dica Pro</span>
+        </div>
+        <p class="mb-0 opacity-75" style="font-size: 0.75rem;">Sincronize os pagamentos toda semana para evitar erros nos relatórios.</p>
     </div>
 </div>
 
 <style>
+    /* Configurações Globais Mobile */
     body {
         background-color: #fdfaf5;
+        -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao tocar no iOS */
     }
 
+    /* Ícones do Grid Principal */
     .icon-box {
-        width: 50px;
-        height: 50px;
-        border-radius: 14px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
+    /* Ícones das Listas Largas */
+    .icon-box-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    /* Feedback Tátil para Mobile */
     .action-card {
-        transition: all 0.2s ease;
-        border: 1px solid rgba(0,0,0,0.02)!important;
+        transition: transform 0.1s ease, background-color 0.1s ease;
+        border: 1px solid rgba(0,0,0,0.03)!important;
     }
 
     .action-card:active {
-        transform: scale(0.96);
-        background-color: #f8f9fa;
+        transform: scale(0.97); /* Efeito de "afundar" ao tocar */
+        background-color: #f2f2f2 !important;
     }
 
-    /* Cores Suaves para os ícones */
-    .bg-primary-subtle { background-color: #e7f1ff; }
-    .bg-warning-subtle { background-color: #fff3cd; }
-    .bg-success-subtle { background-color: #d1e7dd; }
-    .bg-info-subtle { background-color: #cff4fc; }
+    /* Cores de Fundo Suaves */
+    .bg-primary-subtle { background-color: #eef5ff !important; }
+    .bg-warning-subtle { background-color: #fff9e6 !important; }
+    .bg-success-subtle { background-color: #ebfaf0 !important; }
+    .bg-info-subtle    { background-color: #e6faff !important; }
 
-    .text-success { color: #27ae60 !important; }
-    .text-danger { color: #e74c3c !important; }
+    /* Ajuste de altura para telas muito pequenas */
+    @media (max-width: 350px) {
+        .icon-box { width: 40px; height: 40px; font-size: 1.2rem; }
+        h1 { font-size: 1.2rem !important; }
+    }
 </style>
 {% endblock %}
