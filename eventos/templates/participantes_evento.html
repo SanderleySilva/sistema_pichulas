@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Participantes - {{ evento.nome_evento }}{% endblock %}
+
+{% block content %}
+
+<div class="mb-3">
+    <a href="{% url 'lista_eventos' %}" class="text-decoration-none text-muted small">
+        <i class="bi bi-chevron-left"></i> Voltar
+    </a>
+</div>
+
+<div class="mb-4">
+    <h2 class="fw-bold">{{ evento.nome_evento }}</h2>
+    <p class="text-muted mb-0">
+        {{ evento.data_evento }} - {{ evento.local_evento }}
+    </p>
+    <span class="badge
+        {% if evento.status == 'aberto' %}
+            bg-warning text-dark
+        {% elif evento.status == 'finalizado' %}
+            bg-success
+        {% else %}
+            bg-danger
+        {% endif %}
+        mt-2">
+        {{ evento.status|upper }}
+    </span>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body">
+
+        {% for participante in participantes %}
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+            <div>
+                <h6 class="mb-0 fw-bold">
+                    {{ participante.associacao.nome }} {{ participante.associacao.sobrenome }}
+                </h6>
+                <small class="text-muted">
+                    Deve: R$ {{ participante.valor_devido }}
+                </small>
+            </div>
+
+            <div class="text-end">
+
+                <div>
+                    Pago:
+                    <strong>R$ {{ participante.valor_pago }}</strong>
+                </div>
+
+                {% if participante.esta_pago %}
+                    <span class="badge bg-success mt-1">Pago</span>
+                {% else %}
+                    <span class="badge bg-danger mt-1">Pendente</span>
+
+                    {% if evento.status == 'aberto' %}
+                    <form method="POST"
+                          action="{% url 'pagamento_cota' participante.id %}"
+                          class="mt-2 d-flex gap-2 justify-content-end">
+                        {% csrf_token %}
+
+                        <input type="number"
+                               name="valor"
+                               step="0.01"
+                               min="0"
+                               class="form-control form-control-sm"
+                               placeholder="Valor"
+                               style="width:120px;">
+
+                        <button type="submit"
+                                class="btn btn-success btn-sm">
+                            Pagar
+                        </button>
+                    </form>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="text-center py-4">
+            <p class="text-muted">Nenhum participante encontrado.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<style>
+    .badge {
+        font-size: 0.75rem;
+    }
+
+    .card {
+        background-color: #fff;
+    }
+
+    .form-control-sm {
+        border-radius: 8px;
+    }
+
+    .btn-sm {
+        border-radius: 8px;
+    }
+</style>
+
+{% endblock %}

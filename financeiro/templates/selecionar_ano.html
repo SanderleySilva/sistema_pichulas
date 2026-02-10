@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório Anual - Associação Pichulas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-0">
+    <div class="col-12 col-lg-5">
+
+        <div class="mb-3 px-2">
+            <a href="{% url 'tipo_relatorio' %}" class="text-decoration-none text-muted small">
+                <i class="bi bi-chevron-left"></i> Voltar para Relatórios
+            </a>
+        </div>
+
+        <div class="px-2 mb-4">
+            <h2 class="h3 mb-1 fw-bold text-dark">Relatório Anual</h2>
+            <p class="text-muted small">Consolidado financeiro de todo o exercício anual.</p>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="icon-circle bg-info-subtle text-info mx-auto">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                </div>
+
+                <form method="get" action="{% url 'relatorio_anual' %}" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">
+                            {{ field.label }}
+                        </label>
+                        <div class="custom-input-group">
+                            {{ field }}
+                        </div>
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ field.errors|first }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-dark btn-lg fw-bold py-3 rounded-3 shadow-sm border-0"
+                                style="background-color: #2c3e50;">
+                            <i class="bi bi-file-earmark-pdf me-2"></i> Gerar Relatório Anual
+                        </button>
+                        <a href="{% url 'tipo_relatorio' %}" class="btn btn-link text-muted text-decoration-none small">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-4 px-3 text-center">
+            <p class="text-muted small">
+                <i class="bi bi-shield-check me-1"></i>
+                Este documento agrupa os totais arrecadados mês a mês.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #fdfaf5;
+    }
+
+    /* Estilização para os campos do Django (Select/Input) */
+    select, input {
+        display: block;
+        width: 100%;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        border: 2px solid #f0f0f0 !important;
+        border-radius: 12px !important;
+        background-color: #f9f9f9 !important;
+        transition: all 0.2s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px 12px;
+    }
+
+    select:focus, input:focus {
+        border-color: #2c3e50 !important;
+        background-color: #fff !important;
+        outline: 0;
+        box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.1) !important;
+    }
+
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .bg-info-subtle { background-color: #e0f7fa; }
+
+    .form-label {
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+</style>
+{% endblock %}

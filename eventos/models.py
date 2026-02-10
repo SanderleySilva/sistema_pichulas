@@ -1,12 +1,14 @@
 from django.db import models
 
+from associados.models import Associados
+
+
 # Create your models here.
 class Eventos(models.Model):
 
     STATUS_CHOICES = (
-        ('aberto', 'ABERTO'),
-        ('cancelado', 'CANCELADO'),
-        ('finalizado', 'FINALIZADO'),
+        ('aberto', 'aberto'),
+        ('finalizado', 'finalizado'),
     )
 
     nome_evento = models.CharField(max_length=100)
@@ -20,13 +22,25 @@ class Eventos(models.Model):
     status = models.CharField(
         max_length=30,
         choices=STATUS_CHOICES,
-        default='ABERTO'
+        default='aberto'
     )
 
     criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.nome_evento} - {self.data_evento}'
+
+
+    def finalizar_evento(self):
+        if self.status != 'aberto':
+            return
+        self.status = 'finalizado'
+        self.save()
+
+    def cancelar_evento(self):
+        if self.status != 'aberto':
+            return
+        self.delete()
 
 
 class EventoAssociacao(models.Model):
@@ -51,3 +65,5 @@ class EventoAssociacao(models.Model):
     @property
     def esta_pago(self):
         return self.valor_pago >= self.valor_devido
+
+

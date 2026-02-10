@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios - Associação Pichulas{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'home' %}" class="text-decoration-none text-muted small px-1">
+        <i class="bi bi-chevron-left"></i> Voltar ao Painel
+    </a>
+</div>
+
+<div class="mb-4 px-1">
+    <h1 class="h3 mb-0 fw-bold text-dark" style="letter-spacing: -1px;">Central de Relatórios</h1>
+    <p class="text-muted small">Selecione o tipo de documento que deseja gerar.</p>
+</div>
+
+<h6 class="text-muted fw-bold small text-uppercase mb-3 px-1">Documentos Disponíveis</h6>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+    <ul class="list-group list-group-flush">
+
+        <a href="{% url 'selecionar_mes' %}" class="list-group-item list-group-item-action p-4 d-flex align-items-center border-bottom border-light">
+            <div class="icon-report bg-primary-subtle text-primary me-3">
+                <i class="bi bi-calendar-range"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="mb-0 fw-bold text-dark">Relatório Mensal</h6>
+                <small class="text-muted">Extração por mês e ano específico</small>
+            </div>
+            <i class="bi bi-chevron-right text-muted opacity-50"></i>
+        </a>
+
+        <a href="{% url 'selecionar_ano' %}" class="list-group-item list-group-item-action p-4 d-flex align-items-center border-0">
+            <div class="icon-report bg-dark-subtle text-dark me-3">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="mb-0 fw-bold text-dark">Relatório Anual</h6>
+                <small class="text-muted">Consolidado financeiro do ano fiscal</small>
+            </div>
+            <i class="bi bi-chevron-right text-muted opacity-50"></i>
+        </a>
+
+    </ul>
+</div>
+
+<div class="text-center mt-5 opacity-50">
+    <i class="bi bi-file-earmark-pdf fs-1 d-block mb-2"></i>
+    <p class="small">Os relatórios são gerados em formato PDF.</p>
+</div>
+
+<style>
+    body {
+        background-color: #fdfaf5;
+    }
+
+    /* Estilo dos ícones nos itens da lista */
+    .icon-report {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    /* Cores suaves */
+    .bg-primary-subtle { background-color: #e7f1ff; }
+    .bg-dark-subtle { background-color: #e2e3e5; }
+
+    /* Ajuste de toque e hover */
+    .list-group-item {
+        background-color: #fff;
+        transition: background-color 0.2s;
+    }
+
+    .list-group-item:active {
+        background-color: #f8f9fa;
+    }
+
+    /* Ajuste para remover bordas indesejadas */
+    .list-group {
+        border-radius: 0;
+    }
+</style>
+{% endblock %}

@@ -16,10 +16,16 @@
             {{ eventos|length }} AGENDADOS
         </span>
     </div>
-    <a href="{% url 'criar_evento' %}" class="btn btn-dark rounded-pill px-3 shadow-sm d-flex align-items-center"
-       style="background-color: var(--cor-laranja); border: none; height: 45px;">
-        <i class="bi bi-calendar-plus me-1"></i> <span class="small">NOVO</span>
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{% url 'lista_eventos_finalizados' %}" class="btn btn-light rounded-pill px-3 shadow-sm d-flex align-items-center border"
+           style="height: 45px;">
+            <i class="bi bi-check-all me-1"></i> <span class="small fw-bold">FINALIZADOS</span>
+        </a>
+        <a href="{% url 'criar_evento' %}" class="btn btn-dark rounded-pill px-3 shadow-sm d-flex align-items-center"
+           style="background-color: var(--cor-laranja); border: none; height: 45px;">
+            <i class="bi bi-calendar-plus me-1"></i> <span class="small fw-bold">NOVO</span>
+        </a>
+    </div>
 </div>
 
 <div class="row g-3">
@@ -54,18 +60,18 @@
 
                 <div class="row g-2 mt-3">
                     <div class="col-12">
-                        <a href="#" class="btn btn-primary w-100 rounded-3 py-2 fw-bold shadow-none" style="background-color: #0d6efd; border: none;">
+                        <a href="{% url 'lista_associados_eventos' evento.id %}" class="btn btn-primary w-100 rounded-3 py-2 fw-bold shadow-none" style="background-color: #0d6efd; border: none;">
                             <i class="bi bi-people me-2"></i> Ver Associados no Evento
                         </a>
                     </div>
 
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-success w-100 rounded-3 py-2 small fw-bold">
+                        <a href="{% url 'finalizar_evento' evento.id %}" class="btn btn-outline-success w-100 rounded-3 py-2 small fw-bold">
                             <i class="bi bi-check2-circle"></i> Finalizar
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="#" class="btn btn-outline-danger w-100 rounded-3 py-2 small fw-bold">
+                        <a href="{% url 'cancelar_evento' evento.id %}" class="btn btn-outline-danger w-100 rounded-3 py-2 small fw-bold">
                             <i class="bi bi-x-circle"></i> Cancelar
                         </a>
                     </div>
@@ -85,29 +91,14 @@
     body {
         background-color: #fdfaf5;
     }
-
-    .card {
-        transition: transform 0.2s ease;
-    }
-
-    .card-body {
-        position: relative;
-    }
-
-    /* Botões menores para caberem lado a lado no celular */
-    .btn-outline-success, .btn-outline-danger {
-        font-size: 0.85rem;
-        border-width: 1.5px;
-    }
-
-    /* Feedback tátil */
-    .btn:active {
-        transform: scale(0.96);
-    }
-
-    /* Estilo do botão voltar */
-    .text-muted.small:hover {
-        color: var(--cor-laranja) !important;
+    .card { transition: transform 0.2s ease; }
+    .btn:active { transform: scale(0.96); }
+    .text-muted.small:hover { color: var(--cor-laranja) !important; }
+    /* Ajuste para telas muito pequenas não quebrarem os botões do topo */
+    @media (max-width: 380px) {
+        .btn span { display: none; }
+        .btn i { margin: 0 !important; }
+        .btn { padding: 0.5rem 1rem !important; }
     }
 </style>
 {% endblock %}
