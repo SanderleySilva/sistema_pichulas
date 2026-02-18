@@ -50,3 +50,24 @@ Thumbs.db
 # ------------------------------
 *.swp
 *.swo
+
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv
+.venv/
+venv/
+
+# SQLite (se não quiser versionar)
+db.sqlite3
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# PythonAnywhere
+*.log
