@@ -1,8 +1,12 @@
 from django.utils import timezone
 from django.db import models
+from core.models import Assoociacao
 
 #Criação do modelo para cadastrar os associados
 class Associados(models.Model):
+
+    associacao = models.ForeignKey(Assoociacao, on_delete = models.CASCADE)
+
     TIPO_CHOICES = (
         ('jogador','Jogador'),
         ('torcedor','Torcedor'),

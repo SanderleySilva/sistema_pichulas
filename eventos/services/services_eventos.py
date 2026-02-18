@@ -1,3 +1,5 @@
+
+
 from associados.models import Associados
 from eventos.models import EventoAssociacao
 
@@ -13,7 +15,7 @@ class GerarParticipantesEventoService:
         for associado in associados_ativos:
             EventoAssociacao.objects.create(
                 eventos=self.evento,
-                associacao=associado,
+                associado=associado,
                 valor_devido=self.evento.valor_da_cota,
                 valor_pago = 0
             )

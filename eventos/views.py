@@ -1,39 +1,28 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template.loader import render_to_string
-
-from associados.models import Associados
 from eventos.services.services_eventos import GerarParticipantesEventoService
 from .forms import EventoForm
 from eventos.models import EventoAssociacao, Eventos
-from datetime import timezone
-
-
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Paragraph,
-    Spacer,
-    Table,
-    TableStyle
-)
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from eventos.models import Eventos
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 
 
 
-
+@login_required(login_url='/login/')
 def criar_evento(request):
     if request.method == 'POST':
         form = EventoForm(request.POST)
         if form.is_valid():
-            evento = form.save()
+            evento = form.save(commit=False)
+            evento.associacao = request.user.associacao
+            evento.save()
             GerarParticipantesEventoService(evento).executar()
             return redirect('lista_eventos')
 
@@ -42,71 +31,71 @@ def criar_evento(request):
 
     return render(request, 'criar_eventos.html', {'form': form})
 
-
+@login_required(login_url='/login/')
 def lista_eventos(request):
-    eventos = Eventos.objects.filter(status='aberto').order_by('-data_evento')
+
+    eventos = Eventos.objects.filter(associacao=request.user.associacao,status='aberto').order_by('-data_evento')
 
     context = {'eventos': eventos}
 
     return render(request, 'lista_eventos.html', context)
 
-
+@login_required(login_url='/login/')
 def lista_eventos_finalizados(request):
-    eventos = Eventos.objects.filter(status='finalizado').order_by('-data_evento')
+    eventos = Eventos.objects.filter(associacao = request.user.perfil.associacao,status='finalizado').order_by('-data_evento')
     return render(request, 'lista_eventos_finalizados.html', {'eventos': eventos})
 
-
+@login_required(login_url='/login/')
 def finalizar_evento(request, id):
-    evento = get_object_or_404(Eventos, id=id)
+    evento = get_object_or_404(Eventos, id=id,associacao = request.user.perfil.associacao)
     evento.finalizar_evento()
     return redirect('lista_eventos')
 
-
+@login_required(login_url='/login/')
 def cancelar_evento(request, id):
-    evento = get_object_or_404(Eventos, id=id)
+    evento = get_object_or_404(Eventos, id=id, associacao = request.user.associacao)
     evento.cancelar_evento()
     return redirect('lista_eventos')
 
-
+@login_required(login_url='/login/')
 def lista_associados_eventos(request, id):
-    evento = get_object_or_404(Eventos, id=id)
+    evento = get_object_or_404(Eventos, id=id, associacao = request.user.perfil.associacao)
 
-    participantes = evento.participantes.select_related('associacao')
+    participantes = EventoAssociacao.objects.select_related(
+        'eventos',
+        'associado'
+    ).filter(eventos=evento)
     context = {'evento': evento, 'participantes': participantes}
 
     return render(request, 'participantes_evento.html', context)
 
-
+@login_required(login_url='/login/')
 def pagamento_cota(request, id):
-    participante = get_object_or_404(EventoAssociacao, id=id)
+    participante = get_object_or_404(EventoAssociacao, id=id, eventos__associacao = request.user.associacao)
 
     if request.method == 'POST':
         valor= request.POST.get('valor')
 
-        if valor:
+        try:
             valor = Decimal(valor)
+        except (InvalidOperation, ValueError):
+            valor = Decimal('0.00')
 
-        participante.valor_pago += valor
+        participante.valor_pago = valor
 
         if participante.valor_pago > participante.valor_devido:
-            participante.valor_pago = participante.valor_devido
+            participante.valor_devido = participante.valor_pago
 
         participante.save()
 
     return redirect('lista_associados_eventos', participante.eventos.id)
 
 
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+
 
 
 def relatorio_evento_pdf(request, id):
-    evento = get_object_or_404(Eventos, id=id)
+    evento = get_object_or_404(Eventos, id=id, associacao = request.user.perfil.associacao)
     participantes = evento.participantes.all()
 
     # Cálculos para o resumo
@@ -150,7 +139,7 @@ def relatorio_evento_pdf(request, id):
         status_color = colors.darkgreen if p.esta_pago else colors.red
 
         data.append([
-            f"{p.associacao.nome} {p.associacao.sobrenome}".upper(),
+            f"{p.associado.nome} {p.associado.sobrenome}".upper(),
             f"R$ {p.valor_devido:,.2f}",
             f"R$ {p.valor_pago:,.2f}",
             Paragraph(f"<b>{status_text}</b>",

@@ -1,85 +1,125 @@
 {% extends 'base.html' %}
 
-{% block title %}Eventos Finalizados - Associação Pichulas{% endblock %}
+{% block title %}Histórico de Partidas - Gestão{% endblock %}
 
 {% block content %}
-<div class="mb-3">
-    <a href="javascript:history.back()" class="text-decoration-none text-muted small px-1">
-        <i class="bi bi-chevron-left"></i> Voltar
+<div class="mb-3 mt-2">
+    <a href="javascript:history.back()" class="btn-back text-decoration-none">
+        <i class="bi bi-arrow-left-short fs-4 align-middle"></i>
+        <span class="align-middle fw-semibold">Voltar</span>
     </a>
 </div>
 
 <div class="d-flex justify-content-between align-items-end mb-4 px-1">
     <div>
-        <h1 class="h3 mb-0 fw-bold text-dark" style="letter-spacing: -1px;">Histórico de Eventos</h1>
-        <span class="badge bg-secondary text-white fw-bold" style="font-size: 0.7rem;">
-            {{ eventos|length }} FINALIZADOS
-        </span>
+        <h1 class="h3 mb-0 fw-bold text-dark">Galeria de Jogos</h1>
+        <div class="d-flex align-items-center mt-1">
+            <span class="badge bg-secondary text-white fw-bold me-2">
+                {{ eventos|length }} REALIZADOS
+            </span>
+            <small class="text-muted">Arquivo Morto</small>
+        </div>
     </div>
-    </div>
+</div>
 
 <div class="row g-3">
     {% for evento in eventos %}
-    <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="opacity: 0.9;">
-            <div class="card-body p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="fw-bold text-dark mb-1">{{ evento.nome_evento }}</h5>
-                        <p class="mb-1 text-muted small">
-                            <i class="bi bi-geo-alt-fill text-danger"></i> {{ evento.local_evento }}
-                        </p>
+    <div class="col-12 col-md-6">
+        <div class="card event-card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+            <div class="card-body p-0">
+
+                <div class="d-flex">
+                    <div class="date-column d-flex flex-column justify-content-center align-items-center text-white p-3 text-center" style="width: 85px;">
+                        <span class="h2 mb-0 fw-bold lh-1">{{ evento.data_evento|date:"d" }}</span>
+                        <span class="text-uppercase small fw-bold opacity-75">{{ evento.data_evento|date:"M" }}</span>
+                        <small class="opacity-50" style="font-size: 0.65rem; margin-top: 4px;">{{ evento.data_evento|date:"Y" }}</small>
                     </div>
-                    <div class="text-end">
-                        <span class="badge bg-light text-success border rounded-pill">
-                            Concluído
-                        </span>
-                        <div class="small fw-bold mt-1 text-muted">R$ {{ evento.valor_da_cota }}</div>
+
+                    <div class="p-3 flex-grow-1 d-flex flex-column justify-content-center">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h5 class="fw-bold text-dark mb-0 text-truncate" style="max-width: 160px;">
+                                {{ evento.nome_evento }}
+                            </h5>
+                            <span class="badge bg-light text-secondary border rounded-pill small">
+                                <i class="bi bi-check2-all"></i> Fim
+                            </span>
+                        </div>
+
+                        <div class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt-fill text-secondary me-1"></i> {{ evento.local_evento }}
+                        </div>
+
+                        <div class="small fw-semibold text-muted">
+                            Cota: R$ {{ evento.valor_da_cota }}
+                        </div>
                     </div>
                 </div>
 
-                <div class="d-flex align-items-center mt-2 p-2 rounded-3" style="background-color: #f1f3f5;">
-                    <div class="me-3 text-center border-end pe-3">
-                        <span class="d-block fw-bold text-secondary" style="font-size: 1.1rem;">{{ evento.data_evento|date }}</span>
-                        <span class="text-uppercase text-muted" style="font-size: 0.7rem;">{{ evento.data_evento|date }}</span>
-                    </div>
-                    <div class="ps-1">
-                        <small class="text-muted d-block">Realizado em</small>
-                        <span class="fw-bold small">{{ evento.data_evento|date }}</span>
-                    </div>
+                <div class="px-3 pb-3 pt-2 bg-white">
+                    <a href="{% url 'relatorio_evento' evento.id %}" class="btn btn-dark w-100 rounded-3 py-2 fw-bold shadow-sm border-0 btn-report">
+                        <i class="bi bi-file-earmark-bar-graph-fill me-2"></i> Ver Súmula Financeira
+                    </a>
                 </div>
 
-                <div class="row g-2 mt-3">
-                    <div class="col-12">
-                        <a href="{% url 'relatorio_evento' evento.id %}" class="btn btn-dark w-100 rounded-3 py-2 fw-bold shadow-none" style="background-color: #343a40; border: none;">
-                            <i class="bi bi-file-earmark-bar-graph me-2"></i> Gerar Relatório do Evento
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12 text-center py-5">
-        <i class="bi bi-archive text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
-        <p class="text-muted mt-2">Nenhum evento finalizado encontrado.</p>
+    <div class="col-12 text-center py-5 mt-4">
+        <div class="mb-3 opacity-25">
+            <i class="bi bi-archive" style="font-size: 4rem; color: #6c757d;"></i>
+        </div>
+        <h5 class="fw-bold text-muted">Arquivo Vazio</h5>
+        <p class="text-muted small">Nenhum evento foi finalizado ainda.</p>
     </div>
     {% endfor %}
 </div>
 
 <style>
-    body {
-        background-color: #f8f9fa;
+    :root {
+        --cor-primaria: #1a4d2e;
+        --cor-dark: #343a40;
+        --cor-secondary: #6c757d;
     }
 
-    .card {
-        border-left: 5px solid #6c757d !important; /* Cor cinza para indicar finalizado */
-        transition: transform 0.2s ease;
+    /* Botão Voltar */
+    .btn-back {
+        color: #6c757d;
+        transition: color 0.2s;
+    }
+    .btn-back:hover {
+        color: var(--cor-primaria);
     }
 
-    /* Feedback tátil */
-    .btn:active {
+    /* Card de Evento */
+    .event-card {
+        background-color: white;
+        transition: transform 0.2s;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .event-card:active {
         transform: scale(0.98);
+    }
+
+    /* Coluna da Data (Cinza Escuro) */
+    .date-column {
+        background: linear-gradient(180deg, var(--cor-secondary) 0%, var(--cor-dark) 100%);
+    }
+
+    /* Botão de Relatório */
+    .btn-report {
+        background-color: var(--cor-dark);
+        color: #e9ecef;
+    }
+    .btn-report:hover {
+        background-color: #212529;
+        color: white;
+    }
+
+    /* Ajustes Gerais */
+    body {
+        background-color: #fdfaf5; /* Mantém o fundo off-white padrão do sistema */
     }
 </style>
 {% endblock %}

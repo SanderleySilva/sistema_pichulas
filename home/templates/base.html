@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <meta name="theme-color" content="#1a4d2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <title>{% block title %}Área administrativa{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            /* Paleta Futebol Profissional */
+            --cor-primaria: #1a4d2e; /* Verde Gramado Escuro */
+            --cor-secundaria: #143d25; /* Verde Noite */
+            --cor-destaque: #ffc107; /* Dourado/Amarelo Cartão */
+            --cor-fundo: #f4f6f7; /* Cinza Gelo (Uniforme Branco) */
+            --cor-texto: #2c3e50;
+            --altura-header: 60px;
+            --altura-footer: 70px;
+        }
+
+        body {
+            background-color: var(--cor-fundo);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--cor-texto);
+            padding-top: calc(var(--altura-header) + 15px); /* Espaço para o header fixo */
+            padding-bottom: calc(var(--altura-footer) + 20px); /* Espaço para o menu mobile fixo */
+        }
+
+        /* --- Navbar Superior (Header) --- */
+        .navbar-top {
+            background-color: var(--cor-primaria);
+            background-image: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: var(--altura-header);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white !important;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Links Desktop (Escondidos no Mobile) */
+        .desktop-nav-links {
+            display: none;
+        }
+
+        .desktop-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .desktop-link:hover, .desktop-link.active {
+            color: var(--cor-destaque);
+        }
+
+        .desktop-link i {
+            margin-right: 5px;
+        }
+
+        /* --- Menu Inferior (Mobile App Style) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--altura-footer);
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+            z-index: 1020;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            /* Ajuste para iPhone X e novos (Barra Home) */
+            padding-bottom: env(safe-area-inset-bottom);
+            height: calc(var(--altura-footer) + env(safe-area-inset-bottom));
+        }
+
+        .nav-item-mobile {
+            text-decoration: none;
+            color: #95a5a6; /* Cinza desativado */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 100%;
+            height: 100%;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-item-mobile i {
+            font-size: 1.4rem;
+            margin-bottom: 3px;
+            transition: transform 0.2s;
+        }
+
+        /* Efeito de item ativo no mobile */
+        .nav-item-mobile:hover, .nav-item-mobile.active {
+            color: var(--cor-primaria);
+        }
+
+        .nav-item-mobile.active i {
+            transform: translateY(-2px);
+        }
+
+        /* Botão de Destaque Central (Novo Cadastro) */
+        .nav-item-mobile.highlight {
+            color: var(--cor-primaria);
+        }
+
+        .nav-item-mobile.highlight .icon-circle {
+            background-color: var(--cor-primaria);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(26, 77, 46, 0.4);
+            margin-bottom: 2px;
+            position: relative;
+            top: -10px; /* Eleva o botão para fora da barra */
+            border: 4px solid white;
+        }
+
+        /* Botão Sair */
+        .btn-logout {
+            background-color: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        /* --- Estilos Gerais de Conteúdo --- */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+
+        /* --- Breakpoints (Desktop vs Mobile) --- */
+        @media (min-width: 992px) {
+            body {
+                padding-bottom: 0; /* Remove espaço extra no desktop */
+            }
+            .bottom-nav {
+                display: none; /* Esconde menu mobile */
+            }
+            .desktop-nav-links {
+                display: flex; /* Mostra menu desktop */
+                align-items: center;
+            }
+            /* Centraliza o container no desktop para não ficar muito largo */
+            .container {
+                max-width: 960px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar-top d-flex align-items-center">
+        <div class="container d-flex justify-content-between">
+
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home'%}">
+                <i class="bi bi-trophy-fill text-warning"></i>
+                <span>Área Administrativa</span>
+            </a>
+
+            <div class="desktop-nav-links">
+                <a href="{% url 'home' %}" class="desktop-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <i class="bi bi-house-door-fill"></i> Início
+                </a>
+                <a href="{% url 'lista_associados' %}" class="desktop-link {% if request.resolver_match.url_name == 'lista_associados' %}active{% endif %}">
+                    <i class="bi bi-people-fill"></i> Elenco
+                </a>
+                <a href="{% url 'cadastrar_associado' %}" class="desktop-link {% if request.resolver_match.url_name == 'cadastrar_associado' %}active{% endif %}">
+                    <i class="bi bi-person-plus-fill"></i> Novo Craque
+                </a>
+                <a href="{% url 'tipo_relatorio' %}" class="desktop-link {% if request.resolver_match.url_name == 'tipo_relatorio' %}active{% endif %}">
+                    <i class="bi bi-clipboard-data-fill"></i> Táticas
+                </a>
+            </div>
+
+            <form method="post" action="{% url 'logout' %}" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-logout p-2" title="Sair do Sistema">
+                    <i class="bi bi-box-arrow-right"></i> <span class="d-none d-md-inline ms-1">Sair</span>
+                </button>
+            </form>
+
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            <div class="mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="{% url 'home' %}" class="nav-item-mobile {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <i class="bi bi-house-door"></i> <span>Sede</span>
+        </a>
+
+        <a href="{% url 'lista_associados' %}" class="nav-item-mobile {% if request.resolver_match.url_name == 'lista_associados' %}active{% endif %}">
+            <i class="bi bi-people"></i> <span>Elenco</span>
+        </a>
+
+        <a href="{% url 'cadastrar_associado' %}" class="nav-item-mobile highlight">
+            <div class="icon-circle">
+                <i class="bi bi-plus-lg"></i>
+            </div>
+            <span>Novo</span>
+        </a>
+
+        <a href="{% url 'tipo_relatorio' %}" class="nav-item-mobile {% if request.resolver_match.url_name == 'tipo_relatorio' %}active{% endif %}">
+            <i class="bi bi-clipboard-data"></i> <span>Stats</span>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

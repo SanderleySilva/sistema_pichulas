@@ -14,12 +14,15 @@ class GerarMensalidadesService:
         mes_inicio = self.associado.data_cadastro.month
         ano = data_cadastro.year
 
+
         for mes in range(mes_inicio, 13):
             ultimo_dia = calendar.monthrange(ano, mes)[1]
             data_vencimento = date(ano, mes, ultimo_dia)
 
+
             Mensalidade.objects.get_or_create(
                 associado=self.associado,
+                associacao=self.associado.associacao,
                 mes=mes,
                 ano=ano,
                 defaults={

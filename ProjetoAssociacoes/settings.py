@@ -4,9 +4,11 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#login
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL_FAILURE = 'login'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-rsu+e7h_uk&@=*+dl(oev)6j5p)th9ekxg$yx13bb!h56v4j+e'
@@ -28,11 +30,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #My apps
-    'adminApp',
+    'home',
     'associados',
     'financeiro',
     'relatorios',
     'eventos',
+    'core', #app onde irá ser feito o login das associações
 ]
 
 MIDDLEWARE = [
@@ -45,7 +48,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'PichulasAdmin.urls'
+ROOT_URLCONF = 'ProjetoAssociacoes.urls'
 
 TEMPLATES = [
     {
@@ -62,7 +65,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'PichulasAdmin.wsgi.application'
+WSGI_APPLICATION = 'ProjetoAssociacoes.wsgi.application'
 
 
 # Database

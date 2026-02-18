@@ -2,10 +2,12 @@ from django.db import models
 from associados.models import Associados
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-
+from core.models import Assoociacao
 
 
 class Mensalidade(models.Model):
+
+    associacao = models.ForeignKey(Assoociacao, on_delete=models.CASCADE)
 
     STATUS_CHOICES = (
         ('ABERTA','Aberta'),

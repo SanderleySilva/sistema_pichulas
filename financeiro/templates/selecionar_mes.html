@@ -1,27 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}Relatório Mensal - Associação Pichulas{% endblock %}
+{% block title %}Fechamento Mensal - Gestão Financeira{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center g-0">
-    <div class="col-12 col-lg-5">
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
 
-        <div class="mb-3 px-2">
-            <a href="{% url 'tipo_relatorio' %}" class="text-decoration-none text-muted small">
-                <i class="bi bi-chevron-left"></i> Voltar para Relatórios
+        <div class="mb-3 mt-2">
+            <a href="{% url 'tipo_relatorio' %}" class="btn-back text-decoration-none">
+                <i class="bi bi-arrow-left-short fs-4 align-middle"></i>
+                <span class="align-middle fw-semibold">Voltar para Táticas</span>
             </a>
         </div>
 
-        <div class="px-2 mb-4">
-            <h2 class="h3 mb-1 fw-bold text-dark">Relatório Mensal</h2>
-            <p class="text-muted small">Selecione o período para gerar o PDF detalhado.</p>
+        <div class="mb-4 text-center text-md-start">
+            <h2 class="h4 fw-bold text-dark mb-1">Fechamento Mensal</h2>
+            <p class="text-muted small">Gere a lista detalhada de pagamentos e pendências do mês.</p>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: #fff;">
             <div class="card-body p-4">
+
                 <div class="text-center mb-4">
-                    <div class="icon-circle bg-primary-subtle text-primary mx-auto">
-                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                    <div class="icon-header-circle shadow-sm mx-auto">
+                        <i class="bi bi-calendar2-check"></i>
                     </div>
                 </div>
 
@@ -30,86 +32,119 @@
 
                     {% for field in form %}
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-uppercase text-muted">
+                        <label class="form-label small fw-bold text-uppercase text-secondary tracking-wide">
                             {{ field.label }}
                         </label>
-                        <div class="custom-input-group">
+                        <div class="input-wrapper">
                             {{ field }}
                         </div>
                         {% if field.errors %}
-                            <div class="text-danger small mt-1">
+                            <div class="text-danger small mt-2 d-flex align-items-center">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>
                                 {{ field.errors|first }}
                             </div>
                         {% endif %}
                     </div>
                     {% endfor %}
 
-                    <div class="d-grid gap-2 mt-5">
-                        <button type="submit" class="btn btn-primary btn-lg fw-bold py-3 rounded-3 shadow-sm border-0"
-                                style="background-color: var(--cor-laranja);">
-                            <i class="bi bi-download me-2"></i> Gerar Relatório PDF
+                    <div class="d-grid gap-3 mt-5">
+                        <button type="submit" class="btn btn-action btn-lg fw-bold py-3 rounded-3 shadow-sm border-0 text-white">
+                            <i class="bi bi-file-earmark-arrow-down-fill me-2"></i> Baixar Relatório PDF
                         </button>
-                        <a href="{% url 'tipo_relatorio' %}" class="btn btn-link text-muted text-decoration-none small">
-                            Cancelar
-                        </a>
                     </div>
                 </form>
             </div>
         </div>
 
         <div class="mt-4 px-3 text-center">
-            <p class="text-muted small">
-                <i class="bi bi-info-circle me-1"></i>
-                O relatório incluirá tabelas separadas de <strong>pagos</strong> e <strong>pendentes</strong>.
-            </p>
+            <div class="alert alert-light border-0 bg-transparent text-muted small">
+                <i class="bi bi-shield-check me-1"></i>
+                O arquivo separará automaticamente os atletas <strong>Em Dia</strong> dos <strong>Inadimplentes</strong>.
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* Estilização dos Inputs do Django */
-    select, input {
-        display: block;
-        width: 100%;
-        padding: 12px 16px !important;
-        font-size: 16px !important; /* Evita zoom no iPhone */
-        border: 2px solid #f0f0f0 !important;
-        border-radius: 12px !important;
-        background-color: #f9f9f9 !important;
-        transition: all 0.2s ease;
-        appearance: none; /* Remove seta padrão do browser para estilizar */
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 16px 12px;
+    /* --- CSS Local (Padronizado com o Relatório Anual) --- */
+
+    :root {
+        --cor-input-bg: #f8f9fa;
+        --cor-input-border: #e9ecef;
+        --cor-focus: #1a4d2e; /* Verde Principal */
     }
 
-    select:focus, input:focus {
-        border-color: var(--cor-laranja) !important;
-        background-color: #fff !important;
-        outline: 0;
-        box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1) !important;
+    /* Botão Voltar */
+    .btn-back {
+        color: #6c757d;
+        transition: color 0.2s;
+    }
+    .btn-back:hover {
+        color: var(--cor-focus);
     }
 
-    .icon-circle {
-        width: 60px;
-        height: 60px;
+    /* Ícone de Cabeçalho */
+    .icon-header-circle {
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.8rem;
+        /* Degradê Verde */
+        background: linear-gradient(135deg, var(--cor-primaria) 0%, #143d25 100%);
+        color: white;
+        margin-bottom: 20px;
     }
 
-    .bg-primary-subtle { background-color: #e7f1ff; }
-
-    .form-label {
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
+    /* Tipografia */
+    .tracking-wide {
+        letter-spacing: 0.8px;
+        font-size: 0.7rem;
     }
 
-    body {
-        background-color: #fdfaf5;
+    /* Estilização de Inputs e Selects */
+    select, input {
+        display: block;
+        width: 100%;
+        padding: 14px 16px; /* Área de toque otimizada para mobile */
+        font-size: 1rem;
+        font-weight: 500;
+        color: #2c3e50;
+        border: 2px solid var(--cor-input-border);
+        border-radius: 12px;
+        background-color: var(--cor-input-bg);
+        transition: all 0.2s ease;
+        appearance: none;
+
+        /* Seta SVG personalizada na cor VERDE (#1a4d2e) */
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%231a4d2e' stroke='%231a4d2e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px 12px;
+    }
+
+    /* Estados de Foco */
+    select:focus, input:focus {
+        border-color: var(--cor-focus);
+        background-color: #fff;
+        outline: 0;
+        box-shadow: 0 0 0 4px rgba(26, 77, 46, 0.1); /* Glow verde suave */
+    }
+
+    /* Botão Principal */
+    .btn-action {
+        background-color: var(--cor-primaria);
+        transition: transform 0.1s, background-color 0.2s;
+    }
+
+    .btn-action:hover {
+        background-color: #143d25; /* Verde mais escuro no hover */
+    }
+
+    .btn-action:active {
+        transform: scale(0.98); /* Efeito de clique */
     }
 </style>
 {% endblock %}

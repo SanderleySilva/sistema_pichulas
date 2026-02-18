@@ -1,10 +1,12 @@
 from django.db import models
-
+from core.models import Assoociacao
 from associados.models import Associados
 
 
 # Create your models here.
 class Eventos(models.Model):
+
+    associacao = models.ForeignKey(Assoociacao, on_delete=models.CASCADE)
 
     STATUS_CHOICES = (
         ('aberto', 'aberto'),
@@ -50,7 +52,7 @@ class EventoAssociacao(models.Model):
         related_name='participantes',
     )
 
-    associacao = models.ForeignKey(
+    associado = models.ForeignKey(
         'associados.Associados',
         on_delete=models.PROTECT,
         related_name='eventos',
@@ -60,7 +62,7 @@ class EventoAssociacao(models.Model):
     valor_pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
-        return f'{self.eventos} - {self.associacao}'
+        return f'{self.eventos} - {self.associado}'
 
     @property
     def esta_pago(self):

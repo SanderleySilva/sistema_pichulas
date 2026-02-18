@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Acesso Restrito - Gestão{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center min-vh-50 align-items-center mt-4">
+    <div class="col-12 col-md-6 col-lg-4">
+
+        <div class="text-center mb-4">
+            <div class="login-icon-circle shadow-sm mx-auto">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <h2 class="h4 fw-bold text-dark mt-3">Área Técnica</h2>
+            <p class="text-muted small">Informe suas credenciais para acessar.</p>
+        </div>
+
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+            <div class="card-body p-4">
+
+                {% if form.errors %}
+                    <div class="alert alert-danger border-0 bg-danger-subtle text-danger d-flex align-items-center rounded-3 p-3 mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <div class="small fw-bold lh-sm">
+                            Credenciais inválidas.<br>Verifique usuário e senha.
+                        </div>
+                    </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-uppercase text-secondary tracking-wide ps-1">
+                            {{ field.label }}
+                        </label>
+
+                        <div class="input-group">
+                            {{ field }}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-login btn-lg shadow-sm">
+                            <span class="fw-bold">ENTRAR</span>
+                            <i class="bi bi-box-arrow-in-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="text-muted small opacity-75">
+                &copy; {% now "Y" %} Sistema de Gestão Esportiva
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    :root {
+        --cor-primaria: #1a4d2e;
+        --bg-body: #fdfaf5;
+    }
+
+    body {
+        background-color: var(--bg-body);
+    }
+
+    /* Ícone Circular */
+    .login-icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--cor-primaria) 0%, #143d25 100%);
+        color: white;
+    }
+
+    /* Estilização dos Inputs do Django */
+    input {
+        display: block;
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 1rem;
+        color: #333;
+        background-color: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px; /* Bordas arredondadas */
+        transition: all 0.2s ease;
+    }
+
+    input:focus {
+        background-color: #fff;
+        border-color: var(--cor-primaria);
+        outline: 0;
+        box-shadow: 0 0 0 4px rgba(26, 77, 46, 0.1);
+    }
+
+    /* Botão de Login */
+    .btn-login {
+        background-color: var(--cor-primaria);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        transition: transform 0.1s, background-color 0.2s;
+    }
+
+    .btn-login:hover {
+        background-color: #143d25;
+        color: white;
+    }
+
+    .btn-login:active {
+        transform: scale(0.98);
+    }
+
+    .tracking-wide {
+        letter-spacing: 0.5px;
+        font-size: 0.7rem;
+    }
+</style>
+{% endblock %}

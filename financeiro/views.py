@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Mensalidade
@@ -9,17 +10,22 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from django.db.models import Sum
 from decimal import Decimal
+from datetime import datetime
+
+# Definição de Cores do Tema (Verde - Gestão Esportiva)
+COR_PRIMARIA = colors.HexColor("#1a4d2e")
+COR_SECUNDARIA = colors.HexColor("#f8f9fa")
+COR_TEXTO = colors.HexColor("#333333")
+COR_SUCESSO = colors.HexColor("#198754")
+COR_PENDENTE = colors.HexColor("#dc3545")
 
 
-
-
-
+@login_required(login_url='/login/')
 def tipo_relatorio(request):
     return render(request, 'tipo_relatorio.html')
 
 
-
-
+@login_required(login_url='/login/')
 def relatorio_mensal(request):
     if request.method == 'GET':
         form = RelatorioMensalForm()
@@ -32,12 +38,18 @@ def relatorio_mensal(request):
             mes = int(form.cleaned_data['meses'])
             ano = form.cleaned_data['ano']
 
-            # Querysets separados
+            # Obtém a associação do usuário logado dinamicamente
+            associacao_obj = request.user.perfil.associacao
+            nome_associacao = associacao_obj.nome if associacao_obj else "Gestão Esportiva"
+
+            # Querysets
             mensalidades_pagas = Mensalidade.objects.filter(
+                associacao=associacao_obj,
                 mes=mes, ano=ano, status="PAGA"
             ).order_by('associado__nome')
 
             mensalidades_pendentes = Mensalidade.objects.filter(
+                associacao=associacao_obj,
                 mes=mes, ano=ano
             ).exclude(status="PAGA").order_by('associado__nome')
 
@@ -55,102 +67,108 @@ def relatorio_mensal(request):
             styles = getSampleStyleSheet()
 
             # Estilos Customizados
-            style_title = ParagraphStyle('CustomTitle', parent=styles['Title'], fontSize=18,
-                                         textColor=colors.HexColor("#2c3e50"), spaceAfter=12)
+            style_title = ParagraphStyle('CustomTitle', parent=styles['Title'], fontSize=16,
+                                         textColor=COR_PRIMARIA, spaceAfter=2, leading=20)
+            style_subtitle = ParagraphStyle('Subtitle', parent=styles['Normal'], fontSize=10,
+                                            textColor=colors.grey, alignment=1, spaceAfter=20)
             style_heading = ParagraphStyle('Heading', parent=styles['Heading3'], fontSize=12,
-                                           textColor=colors.HexColor("#2c3e50"), spaceBefore=15, spaceAfter=10)
+                                           textColor=COR_TEXTO, spaceBefore=15, spaceAfter=10)
             style_label = ParagraphStyle('Label', parent=styles['Normal'], fontSize=10, textColor=colors.grey)
             style_value = ParagraphStyle('Value', parent=styles['Normal'], fontSize=12, spaceAfter=10)
 
             # --- Cabeçalho ---
-            elements.append(Paragraph(f"RELATÓRIO MENSAL DE MENSALIDADES", style_title))
+            elements.append(Paragraph(f"RELATÓRIO MENSAL", style_title))
+            elements.append(Paragraph(f"{nome_associacao}", style_subtitle))
+
             elements.append(Paragraph("<b>Período de Referência:</b>", style_label))
             elements.append(Paragraph(f"{mes:02d}/{ano}", style_value))
             elements.append(Spacer(1, 0.1 * inch))
 
-            # Função auxiliar para criar o estilo padrão de tabela
-            def get_pichulas_table_style(header_color):
+            # Função auxiliar de estilo de tabela
+            def get_custom_table_style(header_bg_color):
                 return TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), header_color),
+                    ('BACKGROUND', (0, 0), (-1, 0), header_bg_color),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                     ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
                     ('FONTSIZE', (0, 0), (-1, 0), 10),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-                    ('TOPPADDING', (0, 0), (-1, 0), 10),
-                    ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
-                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('TOPPADDING', (0, 0), (-1, 0), 8),
+                    ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),  # Valores à direita
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.lightgrey),
                     ('FONTSIZE', (0, 1), (-1, -1), 9),
                     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                    ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9f9f9")]),
+                    ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#f8f9fa")]),
                 ])
 
             col_widths = [4.5 * inch, 2.5 * inch]
 
             # --- Tabela 1: PAGOS ---
-            elements.append(Paragraph("<i class='bi bi-check-circle'></i> PAGAMENTOS CONFIRMADOS", style_heading))
-            data_pagos = [['ASSOCIADO', 'VALOR PAGO']]
+            elements.append(Paragraph("PAGAMENTOS RECEBIDOS", style_heading))
+            data_pagos = [['ASSOCIADO / ATLETA', 'VALOR PAGO']]
             for m in mensalidades_pagas:
                 data_pagos.append([f"{m.associado.nome} {m.associado.sobrenome}".upper(), f"R$ {m.valor:,.2f}"])
 
             if len(data_pagos) > 1:
                 t_pagos = Table(data_pagos, colWidths=col_widths)
-                t_pagos.setStyle(get_pichulas_table_style(colors.HexColor("#27ae60")))  # Verde para Pagos
+                t_pagos.setStyle(get_custom_table_style(COR_PRIMARIA))  # Verde Institucional
                 elements.append(t_pagos)
             else:
-                elements.append(Paragraph("Nenhum pagamento registrado.", styles['Italic']))
+                elements.append(Paragraph("Nenhum pagamento registrado neste período.", styles['Italic']))
 
-            # --- Tabela 2: NÃO PAGOS ---
-            elements.append(Paragraph("PAGAMENTOS PENDENTES", style_heading))
-            data_pendentes = [['ASSOCIADO', 'VALOR EM ABERTO']]
+            # --- Tabela 2: PENDENTES ---
+            elements.append(Paragraph("PENDÊNCIAS FINANCEIRAS", style_heading))
+            data_pendentes = [['ASSOCIADO / ATLETA', 'VALOR EM ABERTO']]
             for m in mensalidades_pendentes:
                 data_pendentes.append([f"{m.associado.nome} {m.associado.sobrenome}".upper(), f"R$ {m.valor:,.2f}"])
 
             if len(data_pendentes) > 1:
                 t_pendentes = Table(data_pendentes, colWidths=col_widths)
-                t_pendentes.setStyle(get_pichulas_table_style(colors.HexColor("#e74c3c")))  # Vermelho para Pendentes
+                t_pendentes.setStyle(get_custom_table_style(
+                    colors.HexColor("#6c757d")))  # Cinza para pendentes (menos alarmante, mas sério)
                 elements.append(t_pendentes)
             else:
-                elements.append(Paragraph("Não há pendências para este mês.", styles['Italic']))
+                elements.append(Paragraph("Não há pendências registradas.", styles['Italic']))
 
             elements.append(Spacer(1, 0.4 * inch))
 
-            # --- Resumo Financeiro Final ---
+            # --- Resumo Financeiro ---
             resumo_data = [
-                ['RESUMO FINANCEIRO', ''],
+                ['RESUMO DO PERÍODO', ''],
                 ['Total Recebido:', f"R$ {total_arrecadado:,.2f}"],
                 ['Total em Aberto:', f"R$ {total_pendente:,.2f}"],
-                ['Expectativa Total:', f"R$ {total_geral:,.2f}"]
+                ['Potencial Total:', f"R$ {total_geral:,.2f}"]
             ]
 
             resumo_table = Table(resumo_data, colWidths=[2 * inch, 1.5 * inch])
             resumo_table.setStyle(TableStyle([
                 ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
                 ('FONTSIZE', (0, 0), (-1, -1), 10),
-                ('TEXTCOLOR', (0, 1), (1, 1), colors.darkgreen),
-                ('TEXTCOLOR', (0, 2), (1, 2), colors.red),
+                ('TEXTCOLOR', (0, 1), (1, 1), COR_SUCESSO),
+                ('TEXTCOLOR', (0, 2), (1, 2), COR_PENDENTE),
                 ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
                 ('LINEBELOW', (0, 0), (-1, 0), 1, colors.black),
+                ('TOPPADDING', (0, 0), (-1, -1), 6),
             ]))
 
             elements.append(Table([[Spacer(1, 1), resumo_table]], colWidths=[3.5 * inch, 3.5 * inch]))
 
-            # Rodapé
+            # Rodapé Dinâmico
             elements.append(Spacer(1, 0.5 * inch))
-            elements.append(Paragraph("<font color='grey' size='8'>Associação Pichulas - Gerado automaticamente</font>",
+            elements.append(Paragraph(f"<font color='grey' size='8'>{nome_associacao} - Documento Oficial</font>",
                                       styles['Normal']))
 
             doc.build(elements)
             return response
 
 
+@login_required(login_url='/login')
 def selecionar_ano(request):
     form = SelecionarAnoForm()
     return render(request, 'selecionar_ano.html', {'form': form})
 
 
-
+@login_required(login_url='/login')
 def relatorio_anual_pdf(request):
-    # 1️⃣ Pegar o ano enviado pelo formulário
     ano_param = request.GET.get('ano')
 
     if not ano_param:
@@ -161,33 +179,41 @@ def relatorio_anual_pdf(request):
     except ValueError:
         return HttpResponse("Ano inválido.")
 
-    # 2️⃣ Criar resposta PDF
+    # Obtém a associação do usuário logado dinamicamente
+    associacao_obj = request.user.perfil.associacao
+    nome_associacao = associacao_obj.nome if associacao_obj else "Gestão Esportiva"
+
+    # Criar resposta PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="relatorio_anual_{ano}.pdf"'
 
-    # Configuração do Documento (Margens Padronizadas)
     doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
     elements = []
     styles = getSampleStyleSheet()
 
-    # Estilos Customizados Pichulas
-    style_title = ParagraphStyle(
-        'CustomTitle', parent=styles['Title'], fontSize=18, textColor=colors.HexColor("#2c3e50"), spaceAfter=12
-    )
+    # Estilos Customizados
+    style_title = ParagraphStyle('CustomTitle', parent=styles['Title'], fontSize=16, textColor=COR_PRIMARIA,
+                                 spaceAfter=2, leading=20)
+    style_subtitle = ParagraphStyle('Subtitle', parent=styles['Normal'], fontSize=10, textColor=colors.grey,
+                                    alignment=1, spaceAfter=20)
     style_label = ParagraphStyle('Label', parent=styles['Normal'], fontSize=10, textColor=colors.grey)
     style_value = ParagraphStyle('Value', parent=styles['Normal'], fontSize=12, spaceAfter=10)
 
-    # 3️⃣ Cabeçalho
-    elements.append(Paragraph(f"RELATÓRIO ANUAL DE ARRECADAÇÃO", style_title))
-    elements.append(Spacer(1, 0.1 * inch))
-    elements.append(Paragraph("<b>Exercício:</b>", style_label))
+    # Cabeçalho
+    elements.append(Paragraph(f"RELATÓRIO ANUAL CONSOLIDADO", style_title))
+    elements.append(Paragraph(f"{nome_associacao}", style_subtitle))
+
+    elements.append(Paragraph("<b>Exercício Fiscal:</b>", style_label))
     elements.append(Paragraph(f"{ano}", style_value))
     elements.append(Spacer(1, 0.2 * inch))
 
-    # 4️⃣ Buscar mensalidades pagas (Ajustado para 'PAGA' conforme padrão anterior)
-    mensalidades = Mensalidade.objects.filter(ano=ano, status='PAGA')
+    # Buscar mensalidades pagas
+    mensalidades = Mensalidade.objects.filter(
+        associacao=associacao_obj,
+        ano=ano, status='PAGA'
+    )
 
-    # 5️⃣ Agrupar por mês e somar
+    # Agrupar por mês e somar
     resumo = (
         mensalidades
         .values('mes')
@@ -200,12 +226,10 @@ def relatorio_anual_pdf(request):
         7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro',
     }
 
-    # Cabeçalho da Tabela
     data = [['MÊS DE REFERÊNCIA', 'TOTAL ARRECADADO']]
-
     total_anual = Decimal('0.00')
 
-    # 7️⃣ Preencher tabela com formatação
+    # Preencher tabela
     for item in resumo:
         total_mes = item['total'] or Decimal('0.00')
         data.append([
@@ -214,18 +238,22 @@ def relatorio_anual_pdf(request):
         ])
         total_anual += total_mes
 
-    # 9️⃣ Estilização da Tabela
+    # Se não houver dados, adiciona uma linha vazia ou mensagem
+    if len(data) == 1:
+        data.append(["Sem registros no ano", "R$ 0,00"])
+
+    # Estilização da Tabela
     table = Table(data, colWidths=[4.0 * inch, 3.0 * inch])
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#2c3e50")),
+        ('BACKGROUND', (0, 0), (-1, 0), COR_PRIMARIA),  # Verde Institucional
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('TOPPADDING', (0, 0), (-1, 0), 12),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),  # Valores à direita
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9f9f9")]),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.lightgrey),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#f8f9fa")]),
         ('FONTSIZE', (0, 1), (-1, -1), 10),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]))
@@ -233,9 +261,9 @@ def relatorio_anual_pdf(request):
     elements.append(table)
     elements.append(Spacer(1, 0.4 * inch))
 
-    # Resumo Final (Total Anual)
+    # Resumo Final
     resumo_data = [
-        ['FECHAMENTO ANUAL', ''],
+        ['BALANÇO ANUAL', ''],
         ['Total Acumulado:', f"R$ {total_anual:,.2f}"]
     ]
 
@@ -243,19 +271,19 @@ def relatorio_anual_pdf(request):
     resumo_table.setStyle(TableStyle([
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, -1), 11),
-        ('TEXTCOLOR', (0, 1), (1, 1), colors.darkgreen),
+        ('TEXTCOLOR', (0, 1), (1, 1), COR_SUCESSO),
         ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
         ('LINEBELOW', (0, 0), (-1, 0), 1, colors.black),
     ]))
 
     elements.append(Table([[Spacer(1, 1), resumo_table]], colWidths=[3.5 * inch, 3.5 * inch]))
 
-    # Rodapé
+    # Rodapé Dinâmico
     elements.append(Spacer(1, 0.5 * inch))
-    elements.append(Paragraph("<font color='grey' size='8'>Associação Pichulas - Relatório Anual Consolidado</font>",
-                              styles['Normal']))
+    current_year = datetime.now().year
+    elements.append(
+        Paragraph(f"<font color='grey' size='8'>{nome_associacao} - Sistema de Gestão © {current_year}</font>",
+                  styles['Normal']))
 
     doc.build(elements)
     return response
-
-

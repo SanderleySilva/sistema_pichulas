@@ -1,111 +1,195 @@
 {% extends 'base.html' %}
 
-{% block title %}Participantes - {{ evento.nome_evento }}{% endblock %}
+{% block title %}Súmula - {{ evento.nome_evento }}{% endblock %}
 
 {% block content %}
 
-<div class="mb-3">
-    <a href="{% url 'lista_eventos' %}" class="text-decoration-none text-muted small">
-        <i class="bi bi-chevron-left"></i> Voltar
+<div class="mb-3 mt-2">
+    <a href="{% url 'lista_eventos' %}" class="btn-back text-decoration-none">
+        <i class="bi bi-arrow-left-short fs-4 align-middle"></i>
+        <span class="align-middle fw-semibold">Voltar aos Jogos</span>
     </a>
 </div>
 
-<div class="mb-4">
-    <h2 class="fw-bold">{{ evento.nome_evento }}</h2>
-    <p class="text-muted mb-0">
-        {{ evento.data_evento }} - {{ evento.local_evento }}
-    </p>
-    <span class="badge
-        {% if evento.status == 'aberto' %}
-            bg-warning text-dark
-        {% elif evento.status == 'finalizado' %}
-            bg-success
-        {% else %}
-            bg-danger
-        {% endif %}
-        mt-2">
-        {{ evento.status|upper }}
-    </span>
-</div>
-
-<div class="card border-0 shadow-sm rounded-4">
-    <div class="card-body">
-
-        {% for participante in participantes %}
-        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
-
+<div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-start justify-content-between">
             <div>
-                <h6 class="mb-0 fw-bold">
-                    {{ participante.associacao.nome }} {{ participante.associacao.sobrenome }}
-                </h6>
-                <small class="text-muted">
-                    Deve: R$ {{ participante.valor_devido }}
-                </small>
+                <h5 class="text-uppercase text-muted small fw-bold mb-1 tracking-wide">Detalhes da Partida</h5>
+                <h2 class="fw-bold text-dark mb-2">{{ evento.nome_evento }}</h2>
+                <div class="text-muted small">
+                    <i class="bi bi-calendar-event me-1"></i> {{ evento.data_evento|date:"d/m/Y" }}
+                    <span class="mx-2">•</span>
+                    <i class="bi bi-geo-alt-fill text-danger"></i> {{ evento.local_evento }}
+                </div>
             </div>
 
             <div class="text-end">
-
-                <div>
-                    Pago:
-                    <strong>R$ {{ participante.valor_pago }}</strong>
-                </div>
-
-                {% if participante.esta_pago %}
-                    <span class="badge bg-success mt-1">Pago</span>
+                {% if evento.status == 'aberto' %}
+                    <span class="badge bg-warning text-dark border border-warning px-3 py-2 rounded-pill">
+                        <i class="bi bi-unlock-fill me-1"></i> ABERTO
+                    </span>
+                {% elif evento.status == 'finalizado' %}
+                    <span class="badge bg-secondary text-white border px-3 py-2 rounded-pill">
+                        <i class="bi bi-lock-fill me-1"></i> FINALIZADO
+                    </span>
                 {% else %}
-                    <span class="badge bg-danger mt-1">Pendente</span>
-
-                    {% if evento.status == 'aberto' %}
-                    <form method="POST"
-                          action="{% url 'pagamento_cota' participante.id %}"
-                          class="mt-2 d-flex gap-2 justify-content-end">
-                        {% csrf_token %}
-
-                        <input type="number"
-                               name="valor"
-                               step="0.01"
-                               min="0"
-                               class="form-control form-control-sm"
-                               placeholder="Valor"
-                               style="width:120px;">
-
-                        <button type="submit"
-                                class="btn btn-success btn-sm">
-                            Pagar
-                        </button>
-                    </form>
-                    {% endif %}
-
+                    <span class="badge bg-danger text-white border px-3 py-2 rounded-pill">
+                        CANCELADO
+                    </span>
                 {% endif %}
-
             </div>
-
         </div>
-        {% empty %}
-        <div class="text-center py-4">
-            <p class="text-muted">Nenhum participante encontrado.</p>
-        </div>
-        {% endfor %}
-
     </div>
 </div>
 
+<div class="d-flex justify-content-between align-items-center mb-3 px-1">
+    <h6 class="fw-bold text-dark mb-0">Lista de Convocados</h6>
+    <span class="badge bg-light text-muted border">{{ participantes|length }} Atletas</span>
+</div>
+
+<div class="row g-3">
+    {% for participante in participantes %}
+    <div class="col-12 col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden participant-card">
+            <div class="card-body p-3">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-3 fw-bold
+                            {% if participante.esta_pago %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %}">
+                            {{ participante.associacao.nome|slice:":1" }}{{ participante.associacao.sobrenome|slice:":1" }}
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">
+                                {{ participante.associacao.nome }} {{ participante.associacao.sobrenome }}
+                            </h6>
+                            {% if participante.esta_pago %}
+                                <small class="text-success fw-bold d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Pago
+                                </small>
+                            {% else %}
+                                <small class="text-danger fw-bold d-flex align-items-center">
+                                    <i class="bi bi-hourglass-split me-1"></i> Pendente
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <small class="d-block text-muted" style="font-size: 0.75rem;">Cota</small>
+                        <span class="fw-bold text-dark">R$ {{ participante.valor_devido }}</span>
+                    </div>
+                </div>
+
+                {% if evento.status == 'aberto' %}
+                    {% if not participante.esta_pago %}
+                    <div class="bg-light p-3 rounded-3 mt-2 border border-light">
+                        <label class="small text-muted mb-2 fw-semibold d-block">Registrar Pagamento</label>
+                        <form method="POST" action="{% url 'pagamento_cota' participante.id %}" class="d-flex">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted">R$</span>
+                                <input type="number"
+                                       name="valor"
+                                       step="0.01"
+                                       min="0"
+                                       class="form-control border-start-0 ps-1"
+                                       placeholder="0,00"
+                                       required>
+                                <button type="submit" class="btn btn-primary fw-bold px-3 btn-pay">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="bg-success-subtle p-2 rounded-3 mt-2 text-center border border-success-subtle">
+                        <small class="text-success fw-bold">
+                            <i class="bi bi-cash-stack me-1"></i> Total Pago: R$ {{ participante.valor_pago }}
+                        </small>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="border-top pt-2 mt-2 text-center">
+                        <small class="text-muted">
+                            Pago: <strong>R$ {{ participante.valor_pago }}</strong>
+                        </small>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <div class="mb-3 opacity-25">
+            <i class="bi bi-people" style="font-size: 3rem;"></i>
+        </div>
+        <p class="text-muted">Nenhum atleta vinculado a este evento.</p>
+    </div>
+    {% endfor %}
+</div>
+
 <style>
-    .badge {
-        font-size: 0.75rem;
+    :root {
+        --cor-primaria: #1a4d2e;
+        --bg-body: #fdfaf5;
     }
 
-    .card {
-        background-color: #fff;
+    body {
+        background-color: var(--bg-body);
     }
 
-    .form-control-sm {
-        border-radius: 8px;
+    /* Botão Voltar */
+    .btn-back {
+        color: #6c757d;
+        transition: color 0.2s;
+    }
+    .btn-back:hover {
+        color: var(--cor-primaria);
     }
 
-    .btn-sm {
-        border-radius: 8px;
+    /* Typography */
+    .tracking-wide {
+        letter-spacing: 1px;
     }
+
+    /* Avatar com Iniciais */
+    .avatar-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .bg-success-subtle { background-color: #d1e7dd; color: #0f5132; }
+    .bg-danger-subtle { background-color: #f8d7da; color: #842029; }
+
+    /* Inputs do Formulário */
+    .form-control:focus {
+        border-color: var(--cor-primaria);
+        box-shadow: none;
+    }
+
+    /* Botão Pagar */
+    .btn-pay {
+        background-color: var(--cor-primaria);
+        border-color: var(--cor-primaria);
+    }
+    .btn-pay:hover {
+        background-color: #143d25;
+        border-color: #143d25;
+    }
+
+    /* Card Hover Effect */
+    .participant-card {
+        transition: transform 0.2s;
+    }
+
 </style>
 
 {% endblock %}

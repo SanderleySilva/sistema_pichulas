@@ -1,87 +1,136 @@
 {% extends 'base.html' %}
 
-{% block title %}Relatórios - Associação Pichulas{% endblock %}
+{% block title %}Central de Estatísticas - Gestão{% endblock %}
 
 {% block content %}
-<div class="mb-3">
-    <a href="{% url 'home' %}" class="text-decoration-none text-muted small px-1">
-        <i class="bi bi-chevron-left"></i> Voltar ao Painel
-    </a>
-</div>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
 
-<div class="mb-4 px-1">
-    <h1 class="h3 mb-0 fw-bold text-dark" style="letter-spacing: -1px;">Central de Relatórios</h1>
-    <p class="text-muted small">Selecione o tipo de documento que deseja gerar.</p>
-</div>
+        <div class="mb-3 mt-2">
+            <a href="{% url 'home' %}" class="btn-back text-decoration-none">
+                <i class="bi bi-arrow-left-short fs-4 align-middle"></i>
+                <span class="align-middle fw-semibold">Voltar ao Vestiário</span>
+            </a>
+        </div>
 
-<h6 class="text-muted fw-bold small text-uppercase mb-3 px-1">Documentos Disponíveis</h6>
+        <div class="mb-4 px-1">
+            <h1 class="h3 mb-1 fw-bold text-dark" style="letter-spacing: -0.5px;">Prancheta Tática</h1>
+            <p class="text-muted small">Escolha o tipo de balanço financeiro que deseja analisar.</p>
+        </div>
 
-<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-    <ul class="list-group list-group-flush">
+        <div class="d-grid gap-3">
 
-        <a href="{% url 'selecionar_mes' %}" class="list-group-item list-group-item-action p-4 d-flex align-items-center border-bottom border-light">
-            <div class="icon-report bg-primary-subtle text-primary me-3">
-                <i class="bi bi-calendar-range"></i>
+            <a href="{% url 'selecionar_mes' %}" class="text-decoration-none">
+                <div class="card-option shadow-sm p-3 d-flex align-items-center">
+                    <div class="icon-box icon-green me-3">
+                        <i class="bi bi-calendar4-week"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0 fw-bold text-dark">Fechamento Mensal</h6>
+                        <small class="text-muted">Detalhamento mês a mês</small>
+                    </div>
+                    <div class="icon-arrow">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="{% url 'selecionar_ano' %}" class="text-decoration-none">
+                <div class="card-option shadow-sm p-3 d-flex align-items-center">
+                    <div class="icon-box icon-gold me-3">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0 fw-bold text-dark">Balanço da Temporada</h6>
+                        <small class="text-muted">Consolidado anual (Jan-Dez)</small>
+                    </div>
+                    <div class="icon-arrow">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="text-center mt-5 opacity-75">
+            <div class="d-inline-block p-3 rounded-circle bg-white shadow-sm mb-2">
+                <i class="bi bi-file-earmark-pdf-fill fs-2 text-danger"></i>
             </div>
-            <div class="flex-grow-1">
-                <h6 class="mb-0 fw-bold text-dark">Relatório Mensal</h6>
-                <small class="text-muted">Extração por mês e ano específico</small>
-            </div>
-            <i class="bi bi-chevron-right text-muted opacity-50"></i>
-        </a>
+            <p class="small text-muted mb-0 fw-semibold">Documentos gerados em PDF</p>
+            <p class="small text-muted" style="font-size: 0.7rem;">Prontos para impressão ou compartilhamento.</p>
+        </div>
 
-        <a href="{% url 'selecionar_ano' %}" class="list-group-item list-group-item-action p-4 d-flex align-items-center border-0">
-            <div class="icon-report bg-dark-subtle text-dark me-3">
-                <i class="bi bi-calendar-check"></i>
-            </div>
-            <div class="flex-grow-1">
-                <h6 class="mb-0 fw-bold text-dark">Relatório Anual</h6>
-                <small class="text-muted">Consolidado financeiro do ano fiscal</small>
-            </div>
-            <i class="bi bi-chevron-right text-muted opacity-50"></i>
-        </a>
-
-    </ul>
-</div>
-
-<div class="text-center mt-5 opacity-50">
-    <i class="bi bi-file-earmark-pdf fs-1 d-block mb-2"></i>
-    <p class="small">Os relatórios são gerados em formato PDF.</p>
+    </div>
 </div>
 
 <style>
-    body {
-        background-color: #fdfaf5;
+    /* Variáveis locais */
+    :root {
+        --cor-primaria: #1a4d2e;
+        --cor-destaque: #ffc107;
+        --bg-hover: #f8f9fa;
     }
 
-    /* Estilo dos ícones nos itens da lista */
-    .icon-report {
-        width: 48px;
-        height: 48px;
+    /* Botão Voltar */
+    .btn-back {
+        color: #6c757d;
+        transition: color 0.2s;
+    }
+    .btn-back:hover {
+        color: var(--cor-primaria);
+    }
+
+    /* Cards de Opção */
+    .card-option {
+        background-color: white;
+        border-radius: 16px;
+        border: 1px solid rgba(0,0,0,0.04);
+        transition: transform 0.1s ease, background-color 0.2s;
+    }
+
+    /* Efeito de Clique Mobile (Afundar) */
+    .card-option:active {
+        transform: scale(0.98);
+        background-color: var(--bg-hover);
+    }
+
+    .card-option:hover {
+        border-color: rgba(0,0,0,0.1);
+    }
+
+    /* Ícones Quadrados */
+    .icon-box {
+        width: 50px;
+        height: 50px;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
+        flex-shrink: 0;
     }
 
-    /* Cores suaves */
-    .bg-primary-subtle { background-color: #e7f1ff; }
-    .bg-dark-subtle { background-color: #e2e3e5; }
-
-    /* Ajuste de toque e hover */
-    .list-group-item {
-        background-color: #fff;
-        transition: background-color 0.2s;
+    /* Tema Verde (Mensal) */
+    .icon-green {
+        background-color: #e8f5e9; /* Fundo verde bem claro */
+        color: var(--cor-primaria);
     }
 
-    .list-group-item:active {
-        background-color: #f8f9fa;
+    /* Tema Dourado (Anual) */
+    .icon-gold {
+        background-color: #fff8e1; /* Fundo amarelo bem claro */
+        color: #d4a017; /* Ouro um pouco mais escuro para contraste */
     }
 
-    /* Ajuste para remover bordas indesejadas */
-    .list-group {
-        border-radius: 0;
+    /* Seta Direita */
+    .icon-arrow {
+        color: #dee2e6;
+        font-size: 1.2rem;
+    }
+
+    /* Tipografia */
+    h6 {
+        letter-spacing: 0.3px;
     }
 </style>
 {% endblock %}
