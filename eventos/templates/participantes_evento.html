@@ -26,15 +26,15 @@
 
             <div class="text-end">
                 {% if evento.status == 'aberto' %}
-                    <span class="badge bg-warning text-dark border border-warning px-3 py-2 rounded-pill">
+                    <span class="badge bg-warning text-dark border border-warning px-3 py-2 rounded-pill shadow-sm">
                         <i class="bi bi-unlock-fill me-1"></i> ABERTO
                     </span>
                 {% elif evento.status == 'finalizado' %}
-                    <span class="badge bg-secondary text-white border px-3 py-2 rounded-pill">
+                    <span class="badge bg-secondary text-white border px-3 py-2 rounded-pill shadow-sm">
                         <i class="bi bi-lock-fill me-1"></i> FINALIZADO
                     </span>
                 {% else %}
-                    <span class="badge bg-danger text-white border px-3 py-2 rounded-pill">
+                    <span class="badge bg-danger text-white border px-3 py-2 rounded-pill shadow-sm">
                         CANCELADO
                     </span>
                 {% endif %}
@@ -44,7 +44,7 @@
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3 px-1">
-    <h6 class="fw-bold text-dark mb-0">Lista de Convocados</h6>
+    <h6 class="fw-bold text-dark mb-0">Escalação / Convocados</h6>
     <span class="badge bg-light text-muted border">{{ participantes|length }} Atletas</span>
 </div>
 
@@ -56,48 +56,54 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex align-items-center">
-                        <div class="avatar-circle me-3 fw-bold
+                        <div class="avatar-circle me-3 fw-bold shadow-sm
                             {% if participante.esta_pago %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %}">
-                            {{ participante.associacao.nome|slice:":1" }}{{ participante.associacao.sobrenome|slice:":1" }}
+                            {{ participante.associado.nome|first|upper }}{{ participante.associado.sobrenome|first|upper }}
                         </div>
+
                         <div>
                             <h6 class="mb-0 fw-bold text-dark">
-                                {{ participante.associacao.nome }} {{ participante.associacao.sobrenome }}
+                                {{ participante.associado.nome }} {{ participante.associado.sobrenome }}
                             </h6>
+
                             {% if participante.esta_pago %}
-                                <small class="text-success fw-bold d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Pago
+                                <small class="text-success fw-bold d-flex align-items-center" style="font-size: 0.75rem;">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Cota Paga
                                 </small>
                             {% else %}
-                                <small class="text-danger fw-bold d-flex align-items-center">
-                                    <i class="bi bi-hourglass-split me-1"></i> Pendente
+                                <small class="text-danger fw-bold d-flex align-items-center animate-pulse" style="font-size: 0.75rem;">
+                                    <i class="bi bi-hourglass-split me-1"></i> Aguardando
                                 </small>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="text-end">
-                        <small class="d-block text-muted" style="font-size: 0.75rem;">Cota</small>
-                        <span class="fw-bold text-dark">R$ {{ participante.valor_devido }}</span>
+                        <small class="d-block text-muted text-uppercase" style="font-size: 0.65rem; font-weight: 700;">Valor</small>
+                        <span class="fw-bold text-dark">R$ {{ participante.valor_devido|floatformat:2 }}</span>
                     </div>
                 </div>
 
                 {% if evento.status == 'aberto' %}
                     {% if not participante.esta_pago %}
-                    <div class="bg-light p-3 rounded-3 mt-2 border border-light">
-                        <label class="small text-muted mb-2 fw-semibold d-block">Registrar Pagamento</label>
+                    <div class="bg-light p-3 rounded-3 mt-2 border border-light-subtle">
+                        <label class="small text-muted mb-2 fw-bold d-block text-uppercase" style="font-size: 0.7rem;">
+                            Registrar Pagamento
+                        </label>
+
                         <form method="POST" action="{% url 'pagamento_cota' participante.id %}" class="d-flex">
                             {% csrf_token %}
                             <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 text-muted">R$</span>
+                                <span class="input-group-text bg-white border-end-0 text-muted fw-bold" style="font-size: 0.9rem;">R$</span>
                                 <input type="number"
                                        name="valor"
                                        step="0.01"
                                        min="0"
-                                       class="form-control border-start-0 ps-1"
+                                       class="form-control border-start-0 ps-1 fw-bold text-dark"
                                        placeholder="0,00"
+                                       value="{{ participante.valor_devido|stringformat:'.2f' }}"
                                        required>
-                                <button type="submit" class="btn btn-primary fw-bold px-3 btn-pay">
+                                <button type="submit" class="btn btn-pay text-white fw-bold px-3 shadow-sm" title="Confirmar Pagamento">
                                     <i class="bi bi-check-lg"></i>
                                 </button>
                             </div>
@@ -105,15 +111,15 @@
                     </div>
                     {% else %}
                     <div class="bg-success-subtle p-2 rounded-3 mt-2 text-center border border-success-subtle">
-                        <small class="text-success fw-bold">
-                            <i class="bi bi-cash-stack me-1"></i> Total Pago: R$ {{ participante.valor_pago }}
+                        <small class="text-success fw-bold text-uppercase" style="font-size: 0.7rem;">
+                            <i class="bi bi-cash-stack me-1"></i> Total Pago: R$ {{ participante.valor_pago|floatformat:2 }}
                         </small>
                     </div>
                     {% endif %}
                 {% else %}
                     <div class="border-top pt-2 mt-2 text-center">
                         <small class="text-muted">
-                            Pago: <strong>R$ {{ participante.valor_pago }}</strong>
+                            Total Pago: <strong>R$ {{ participante.valor_pago|floatformat:2 }}</strong>
                         </small>
                     </div>
                 {% endif %}
@@ -124,9 +130,10 @@
     {% empty %}
     <div class="col-12 text-center py-5">
         <div class="mb-3 opacity-25">
-            <i class="bi bi-people" style="font-size: 3rem;"></i>
+            <i class="bi bi-clipboard-x" style="font-size: 3rem;"></i>
         </div>
-        <p class="text-muted">Nenhum atleta vinculado a este evento.</p>
+        <h6 class="fw-bold text-muted">Nenhum convocado</h6>
+        <p class="text-muted small">Adicione atletas para gerenciar a súmula.</p>
     </div>
     {% endfor %}
 </div>
@@ -150,46 +157,49 @@
         color: var(--cor-primaria);
     }
 
-    /* Typography */
-    .tracking-wide {
-        letter-spacing: 1px;
-    }
-
-    /* Avatar com Iniciais */
+    /* Avatar Squircle (Quadrado Arredondado) */
     .avatar-circle {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px; /* Squircle */
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.9rem;
+        font-size: 1.1rem;
+        transition: transform 0.2s;
     }
 
     .bg-success-subtle { background-color: #d1e7dd; color: #0f5132; }
-    .bg-danger-subtle { background-color: #f8d7da; color: #842029; }
+    .bg-danger-subtle { background-color: #fff5f5; color: #dc3545; }
 
     /* Inputs do Formulário */
+    .form-control {
+        background-color: #fff;
+    }
     .form-control:focus {
         border-color: var(--cor-primaria);
-        box-shadow: none;
+        box-shadow: 0 0 0 0.2rem rgba(26, 77, 46, 0.15);
     }
 
     /* Botão Pagar */
     .btn-pay {
         background-color: var(--cor-primaria);
-        border-color: var(--cor-primaria);
+        border: none;
+        transition: background-color 0.2s;
     }
     .btn-pay:hover {
         background-color: #143d25;
-        border-color: #143d25;
     }
 
-    /* Card Hover Effect */
-    .participant-card {
-        transition: transform 0.2s;
+    /* Animação Pulso para Pendentes */
+    .animate-pulse {
+        animation: pulse 2s infinite;
     }
-
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
 </style>
 
 {% endblock %}

@@ -11,7 +11,9 @@ class GerarParticipantesEventoService:
 
     def executar(self):
 
-        associados_ativos = Associados.objects.filter(ativo=True)
+        associados_ativos = Associados.objects.filter(
+            associacao = self.evento.associacao,
+            ativo=True)
         for associado in associados_ativos:
             EventoAssociacao.objects.create(
                 eventos=self.evento,
